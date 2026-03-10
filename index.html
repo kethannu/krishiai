@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>KrishiAI — Crop Profit Advisor</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,700;0,900;1,400&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
@@ -10,130 +11,132 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 :root{--soil:#120d00;--gold:#c8951a;--cream:#f5edd6;--green:#1c3a1e;--text:#f0e6d0;--muted:#a89070;--card:rgba(255,255,255,0.045);--border:rgba(200,149,26,0.22);}
-html{scroll-behavior:smooth;}body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--soil);color:var(--text);overflow-x:hidden;}
+html{scroll-behavior:smooth;}
+body{font-family:"Plus Jakarta Sans",sans-serif;background:var(--soil);color:var(--text);overflow-x:hidden;}
 ::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-thumb{background:var(--gold);}
-.reveal{opacity:0;transform:translateY(40px);transition:opacity .7s ease,transform .7s ease;}
-.reveal.fl{transform:translateX(-50px);}.reveal.fr{transform:translateX(50px);}
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .7s,transform .7s;}
 .reveal.on{opacity:1;transform:none;}
-.d1{transition-delay:.1s;}.d2{transition-delay:.2s;}.d3{transition-delay:.3s;}.d4{transition-delay:.4s;}
-header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;background:linear-gradient(to bottom,rgba(18,13,0,.97),transparent);transition:background .3s;}
+.d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}.d4{transition-delay:.4s}
+header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:.9rem 2rem;background:linear-gradient(to bottom,rgba(18,13,0,.97),transparent);transition:background .3s;}
 header.sc{background:rgba(18,13,0,.97)!important;border-bottom:1px solid var(--border);}
-.logo{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:700;color:var(--gold);}
-nav a{font-size:.72rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);text-decoration:none;margin-left:1.5rem;}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.logo-text{font-family:"Cormorant Garamond",serif;font-size:1.5rem;font-weight:700;color:var(--gold);line-height:1;}
+.logo-sub{display:block;font-size:.42rem;letter-spacing:3px;color:var(--muted);text-transform:uppercase;font-family:"Plus Jakarta Sans",sans-serif;}
+nav a{font-size:.7rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);text-decoration:none;margin-left:1.5rem;}
 nav a:hover{color:var(--gold);}
+.hnav{display:flex;align-items:center;gap:.6rem;}
+.hlang{background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--muted);padding:6px 14px;border-radius:20px;font-size:.7rem;cursor:pointer;font-family:inherit;}
+.hlang:hover{border-color:var(--gold);color:var(--gold);}
 .bcta{background:var(--gold);color:var(--soil);padding:9px 20px;border-radius:4px;font-size:.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;border:none;cursor:pointer;font-family:inherit;}
 @media(max-width:700px){nav{display:none;}}
 #hero{height:100vh;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;}
-.hbg{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(18,13,0,.5) 0%,rgba(18,13,0,.1) 40%,rgba(18,13,0,.95) 100%),url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=1920&q=80') center/cover;transform:scale(1.06);transition:transform 8s ease;}
+.hbg{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(18,13,0,.5) 0%,rgba(18,13,0,.1) 40%,rgba(18,13,0,.95) 100%),url("https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=1920&q=80") center/cover;transform:scale(1.06);transition:transform 8s ease;}
 .hbg.ld{transform:scale(1);}
 .ptcl{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
-.p{position:absolute;background:var(--gold);border-radius:50%;opacity:0;animation:fu linear infinite;}
-@keyframes fu{0%{opacity:0;transform:translateY(100vh);}10%{opacity:.5;}90%{opacity:.1;}100%{opacity:0;transform:translateY(-5vh);}}
+.pt{position:absolute;background:var(--gold);border-radius:50%;opacity:0;animation:ptup linear infinite;}
+@keyframes ptup{0%{opacity:0;transform:translateY(100vh);}10%{opacity:.5;}90%{opacity:.1;}100%{opacity:0;transform:translateY(-5vh);}}
 .hc{position:relative;z-index:2;text-align:center;max-width:960px;padding:0 2rem;}
 .htag{display:inline-flex;border:1px solid rgba(200,149,26,.4);color:var(--gold);padding:6px 18px;border-radius:2px;font-size:.65rem;letter-spacing:3px;text-transform:uppercase;margin-bottom:1.8rem;background:rgba(200,149,26,.06);animation:fup .8s both;}
-.hh{font-family:'Cormorant Garamond',serif;font-size:clamp(3rem,7.5vw,7rem);font-weight:900;line-height:.92;letter-spacing:-3px;animation:fup .9s .1s both;}
+.hh{font-family:"Cormorant Garamond",serif;font-size:clamp(3rem,7.5vw,7rem);font-weight:900;line-height:.92;letter-spacing:-3px;animation:fup .9s .1s both;}
 .hh em{display:block;color:var(--gold);font-style:italic;font-weight:300;}
 .hp{font-size:1rem;color:rgba(240,230,208,.7);max-width:500px;margin:1.8rem auto;line-height:1.75;animation:fup .9s .2s both;font-weight:300;}
 .hbtns{display:flex;gap:1rem;justify-content:center;animation:fup .9s .3s both;flex-wrap:wrap;}
 .bprim{background:var(--gold);color:var(--soil);padding:14px 36px;border-radius:3px;font-size:.82rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border:none;cursor:pointer;transition:all .25s;font-family:inherit;}
-.bprim:hover{background:var(--cream);transform:translateY(-2px);}
-.boutl{background:transparent;color:var(--cream);padding:14px 36px;border-radius:3px;font-size:.82rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;border:1px solid rgba(240,230,208,.3);cursor:pointer;transition:all .25s;font-family:inherit;}
+.bprim:hover{opacity:.85;transform:translateY(-2px);}
+.boutl{background:transparent;color:var(--cream);padding:14px 36px;border-radius:3px;font-size:.82rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;border:1px solid rgba(240,230,208,.3);cursor:pointer;font-family:inherit;}
 .boutl:hover{border-color:var(--gold);color:var(--gold);}
 .hstats{position:absolute;bottom:2.5rem;left:0;right:0;display:flex;justify-content:center;gap:4rem;flex-wrap:wrap;padding:0 2rem;animation:fup .9s .5s both;}
-.hstat .num{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:700;color:var(--gold);}
+.hstat .num{font-family:"Cormorant Garamond",serif;font-size:2.4rem;font-weight:700;color:var(--gold);}
 .hstat .lbl{font-size:.65rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
 @keyframes fup{from{opacity:0;transform:translateY(28px);}to{opacity:1;transform:none;}}
 .tkwrap{background:rgba(28,58,30,.85);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:10px 0;overflow:hidden;}
-.tk{display:flex;gap:3rem;white-space:nowrap;animation:sc 35s linear infinite;}
+.tk{display:flex;gap:3rem;white-space:nowrap;animation:scr 35s linear infinite;}
 .tk:hover{animation-play-state:paused;}
-@keyframes sc{from{transform:translateX(0);}to{transform:translateX(-50%);}}
-.ti{display:flex;align-items:center;gap:8px;font-size:.74rem;}
+@keyframes scr{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+.ti{display:inline-flex;align-items:center;gap:8px;font-size:.74rem;}
 .tn{color:var(--gold);font-weight:600;}.tp{color:var(--cream);}
 .tu{color:#5cb85c;}.td{color:#d9534f;}
 #how{padding:8rem 2rem;background:linear-gradient(to bottom,var(--soil),#0e1a0f,var(--soil));}
 .sw{max-width:1240px;margin:0 auto;}
 .ey{font-size:.65rem;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;}
-.stit{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4.5vw,3.8rem);font-weight:700;line-height:1.05;margin-bottom:1rem;}
+.stit{font-family:"Cormorant Garamond",serif;font-size:clamp(2rem,4.5vw,3.8rem);font-weight:700;line-height:1.05;margin-bottom:1rem;}
 .stit em{color:var(--gold);font-style:italic;}
 .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin-top:4rem;}
 @media(max-width:800px){.steps{grid-template-columns:1fr 1fr;}}
 .step{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:2rem 1.5rem;transition:all .35s;position:relative;overflow:hidden;}
-.step::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);transform:scaleX(0);transition:transform .4s;}
+.step::after{content:"";position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);transform:scaleX(0);transition:transform .4s;}
 .step:hover::after{transform:scaleX(1);}
 .step:hover{transform:translateY(-6px);background:rgba(200,149,26,.07);}
-.snum{font-family:'Cormorant Garamond',serif;font-size:4rem;font-weight:900;color:var(--border);line-height:1;}
+.snum{font-family:"Cormorant Garamond",serif;font-size:4rem;font-weight:900;color:var(--border);line-height:1;}
 .sico{font-size:2rem;margin:.5rem 0;}
 .step h3{font-size:1rem;font-weight:600;margin-bottom:.4rem;color:var(--cream);}
 .step p{font-size:.78rem;color:var(--muted);line-height:1.65;}
 #gallery{padding:4rem 0;overflow:hidden;}
 .gtit{text-align:center;padding:0 2rem;margin-bottom:2.5rem;}
-.grow{display:flex;gap:1.2rem;padding:.5rem 1.5rem;white-space:nowrap;}
-.gr1{animation:sr 38s linear infinite;}
-.gr2{animation:sl 44s linear infinite;}
+.grow{display:flex;gap:1.2rem;padding:.5rem 1.5rem;}
+.gr1{animation:gsr 38s linear infinite;}
+.gr2{animation:gsl 44s linear infinite;}
 .gr1:hover,.gr2:hover{animation-play-state:paused;}
-@keyframes sl{from{transform:translateX(0);}to{transform:translateX(-50%);}}
-@keyframes sr{from{transform:translateX(-50%);}to{transform:translateX(0);}}
+@keyframes gsl{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+@keyframes gsr{from{transform:translateX(-50%);}to{transform:translateX(0);}}
 .gi{display:inline-block;width:240px;height:165px;border-radius:14px;overflow:hidden;position:relative;border:1px solid var(--border);cursor:pointer;transition:all .3s;flex-shrink:0;}
 .gi:hover{transform:scale(1.05);border-color:var(--gold);box-shadow:0 8px 28px rgba(200,149,26,.3);}
 .gi img{width:100%;height:100%;object-fit:cover;transition:transform .5s;}
 .gi:hover img{transform:scale(1.1);}
-.gilbl{position:absolute;bottom:0;left:0;right:0;padding:9px 12px;background:linear-gradient(to top,rgba(18,13,0,.95),transparent);font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;}
+.gilbl{position:absolute;bottom:0;left:0;right:0;padding:9px 12px;background:linear-gradient(to top,rgba(18,13,0,.95),transparent);font-family:"Cormorant Garamond",serif;font-size:1.05rem;font-weight:700;}
 .giprice{font-size:.65rem;color:var(--gold);}
 .modal-ov{position:fixed;inset:0;z-index:300;background:rgba(18,13,0,.94);backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;padding:1rem;}
 .modal-ov.open{opacity:1;pointer-events:all;}
 .modal{background:linear-gradient(135deg,#1a1000,#0a150b);border:1px solid var(--border);border-radius:22px;width:100%;max-width:680px;max-height:92vh;overflow-y:auto;padding:2.5rem;position:relative;}
-.mcl{position:absolute;top:1.2rem;right:1.5rem;background:rgba(255,255,255,.06);border:none;color:var(--muted);font-size:1.1rem;cursor:pointer;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.mcl{position:absolute;top:1.2rem;right:1.5rem;background:rgba(255,255,255,.06);border:none;color:var(--muted);cursor:pointer;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;}
 .mcl:hover{color:var(--gold);}
 .pbar{display:flex;gap:6px;margin-bottom:2.5rem;}
 .ps{flex:1;height:3px;background:rgba(255,255,255,.08);border-radius:2px;transition:background .4s;}
 .ps.on{background:var(--gold);}
 .fst{display:none;}.fst.on{display:block;}
-.ftit{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;margin-bottom:.3rem;}
+.ftit{font-family:"Cormorant Garamond",serif;font-size:2rem;font-weight:700;margin-bottom:.3rem;}
 .fsub{font-size:.78rem;color:var(--muted);margin-bottom:2rem;line-height:1.5;}
 .fg{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
 @media(max-width:500px){.fg{grid-template-columns:1fr;}}
 .fl2{margin-bottom:1.2rem;}
 .fl2 label{display:block;font-size:.65rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:7px;font-weight:600;}
-.fl2 input,.fl2 select{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--text);padding:12px 15px;border-radius:10px;font-size:.86rem;font-family:inherit;outline:none;transition:border .2s;}
+.fl2 input,.fl2 select{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--text);padding:12px 15px;border-radius:10px;font-size:.86rem;font-family:inherit;outline:none;}
 .fl2 input:focus,.fl2 select:focus{border-color:var(--gold);}
 .fl2 select option{background:#1a1000;}
 .sdbox{background:rgba(200,149,26,.08);border:1px solid rgba(200,149,26,.3);border-radius:10px;padding:1rem 1.2rem;margin-bottom:1rem;display:none;align-items:center;gap:12px;}
+.sdbox.show{display:flex;}
 .sdbox strong{color:var(--gold);display:block;font-size:.88rem;margin-bottom:2px;}
 .sdbox span{font-size:.75rem;color:var(--muted);}
 .rgp{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
 .rc{border:1px solid var(--border);border-radius:10px;padding:13px;text-align:center;cursor:pointer;transition:all .2s;}
 .rc:hover,.rc.on{border-color:var(--gold);background:rgba(200,149,26,.1);}
-.rc input{display:none;}
 .rc .ri{font-size:1.5rem;display:block;margin-bottom:5px;}
 .rc .rl{font-size:.7rem;color:var(--muted);}
 .rc.on .rl{color:var(--gold);font-weight:600;}
 .rw{margin-bottom:1.5rem;}
 .rw label{display:flex;justify-content:space-between;align-items:center;font-size:.65rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;font-weight:600;}
-.rw label span{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--gold);font-weight:700;letter-spacing:0;text-transform:none;}
+.rw label span{font-family:"Cormorant Garamond",serif;font-size:1.4rem;color:var(--gold);font-weight:700;letter-spacing:0;text-transform:none;}
 input[type=range]{width:100%;height:4px;-webkit-appearance:none;background:rgba(255,255,255,.1);border-radius:2px;outline:none;cursor:pointer;}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:19px;height:19px;background:var(--gold);border-radius:50%;cursor:pointer;}
 .fnav{display:flex;gap:1rem;justify-content:flex-end;margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border);}
-.bnx{background:var(--gold);color:var(--soil);padding:11px 28px;border-radius:8px;font-size:.78rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;border:none;cursor:pointer;font-family:inherit;transition:all .2s;}
-.bnx:hover{background:var(--cream);}
-.bbk{background:transparent;color:var(--muted);padding:11px 20px;border-radius:8px;font-size:.78rem;font-weight:600;border:1px solid var(--border);cursor:pointer;font-family:inherit;transition:all .2s;}
-.bbk:hover{color:var(--text);}
+.bnx{background:var(--gold);color:var(--soil);padding:11px 28px;border-radius:8px;font-size:.78rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;border:none;cursor:pointer;font-family:inherit;}
+.bbk{background:transparent;color:var(--muted);padding:11px 20px;border-radius:8px;font-size:.78rem;font-weight:600;border:1px solid var(--border);cursor:pointer;font-family:inherit;}
 .ci{display:flex;align-items:center;gap:10px;border:1px solid var(--border);border-radius:10px;padding:11px 14px;cursor:pointer;transition:all .2s;margin-bottom:8px;}
 .ci:hover,.ci.on{border-color:var(--gold);background:rgba(200,149,26,.08);}
 .ci label{font-size:.84rem;cursor:pointer;}
 .ci input{accent-color:var(--gold);}
-.pbs{display:flex;gap:8px;flex-wrap:wrap;}
-.pb{background:rgba(200,149,26,.08);border:1px solid var(--border);color:var(--muted);padding:6px 15px;border-radius:20px;cursor:pointer;font-size:.73rem;font-family:inherit;transition:all .2s;}
+.pbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+.pb{background:rgba(200,149,26,.08);border:1px solid var(--border);color:var(--muted);padding:6px 15px;border-radius:20px;cursor:pointer;font-size:.73rem;font-family:inherit;}
 .pb:hover{border-color:var(--gold);color:var(--gold);}
 #ls{position:fixed;inset:0;z-index:400;background:linear-gradient(135deg,#0a0800,#060d07);display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
 #ls.on{opacity:1;pointer-events:all;}
 .lring{width:88px;height:88px;position:relative;margin-bottom:2rem;}
-.lring::before,.lring::after{content:'';position:absolute;inset:0;border-radius:50%;border:2px solid transparent;}
+.lring::before,.lring::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid transparent;}
 .lring::before{border-top-color:var(--gold);animation:spin 1s linear infinite;}
 .lring::after{border-bottom-color:rgba(200,149,26,.25);animation:spin 1.8s linear infinite reverse;}
 @keyframes spin{to{transform:rotate(360deg);}}
-.lic{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:2rem;animation:pulse 1.5s ease infinite;}
-@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.5;}}
-.lti{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:700;color:var(--gold);margin-bottom:.3rem;}
+.lic{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:2rem;}
+.lti{font-family:"Cormorant Garamond",serif;font-size:1.8rem;font-weight:700;color:var(--gold);margin-bottom:.3rem;}
 .lsu{font-size:.7rem;color:var(--muted);margin-bottom:1rem;letter-spacing:1px;text-transform:uppercase;}
 .lft{font-size:.82rem;color:rgba(240,230,208,.6);max-width:370px;text-align:center;line-height:1.65;min-height:44px;}
 .lpb{width:290px;height:3px;background:rgba(255,255,255,.08);border-radius:2px;margin-top:2rem;overflow:hidden;}
@@ -149,44 +152,42 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:19px;heigh
 .trov{position:absolute;inset:0;background:linear-gradient(105deg,rgba(18,13,0,.95) 35%,rgba(18,13,0,.3) 100%);}
 .trco{position:absolute;inset:0;padding:2.5rem 3rem;display:flex;flex-direction:column;justify-content:center;max-width:570px;}
 .rbadge{display:inline-block;background:var(--gold);color:var(--soil);padding:4px 15px;border-radius:2px;font-size:.6rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:1rem;}
-.trco h2{font-family:'Cormorant Garamond',serif;font-size:clamp(2.2rem,5vw,3.8rem);font-weight:900;line-height:.95;margin-bottom:.6rem;}
+.trco h2{font-family:"Cormorant Garamond",serif;font-size:clamp(2.2rem,5vw,3.8rem);font-weight:900;line-height:.95;margin-bottom:.6rem;}
 .trco h2 span{color:var(--gold);}
 .trsub{font-size:.86rem;color:rgba(240,230,208,.65);margin-bottom:1.5rem;line-height:1.6;}
 .ph{background:rgba(200,149,26,.12);border:1px solid rgba(200,149,26,.3);border-radius:10px;padding:1rem 1.3rem;display:inline-flex;gap:2rem;flex-wrap:wrap;}
 .pit{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
-.pit .am{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:700;color:var(--gold);display:block;}
+.pit .am{font-family:"Cormorant Garamond",serif;font-size:1.6rem;font-weight:700;color:var(--gold);display:block;}
 .scring{position:absolute;right:3rem;top:50%;transform:translateY(-50%);text-align:center;}
 @media(max-width:680px){.scring{display:none;}.trco{padding:1.5rem;}}
-.sccirc{width:108px;height:108px;border-radius:50%;border:2px solid var(--gold);display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(18,13,0,.8);box-shadow:0 0 28px rgba(200,149,26,.2);}
-.sccirc .sn{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:900;color:var(--gold);line-height:1;}
+.sccirc{width:108px;height:108px;border-radius:50%;border:2px solid var(--gold);display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(18,13,0,.8);}
+.sccirc .sn{font-family:"Cormorant Garamond",serif;font-size:2.4rem;font-weight:900;color:var(--gold);line-height:1;}
 .sccirc .sl{font-size:.52rem;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;}
 .why{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:20px;padding:2rem;margin-bottom:2rem;}
-.why h3{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:700;margin-bottom:1.5rem;color:var(--gold);}
+.why h3{font-family:"Cormorant Garamond",serif;font-size:1.6rem;font-weight:700;margin-bottom:1.5rem;color:var(--gold);}
 .wgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
 @media(max-width:700px){.wgrid{grid-template-columns:1fr 1fr;}}
-.wc{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;padding:1.2rem;transition:all .3s;position:relative;overflow:hidden;}
-.wc::before{content:'';position:absolute;top:0;left:0;width:3px;height:0;background:var(--gold);transition:height .4s;}
-.wc:hover::before{height:100%;}
-.wc:hover{background:rgba(200,149,26,.06);transform:translateX(4px);}
-.wico{font-size:1.8rem;margin-bottom:.6rem;}
+.wcard{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;padding:1.2rem;transition:all .3s;}
+.wcard:hover{background:rgba(200,149,26,.06);transform:translateX(4px);}
+.wico2{font-size:1.8rem;margin-bottom:.6rem;}
 .wtit{font-size:.78rem;font-weight:600;color:var(--cream);margin-bottom:.3rem;}
 .wdsc{font-size:.72rem;color:var(--muted);line-height:1.6;}
 .rgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;margin-bottom:2rem;}
 @media(max-width:900px){.rgrid{grid-template-columns:1fr 1fr;}}
 @media(max-width:560px){.rgrid{grid-template-columns:1fr;}}
 .rcard{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;transition:all .3s;}
-.rcard:hover{border-color:var(--gold);transform:translateY(-6px);box-shadow:0 20px 50px rgba(0,0,0,.5);}
-.rcimg{height:180px;overflow:hidden;position:relative;}
+.rcard:hover{border-color:var(--gold);transform:translateY(-6px);}
+.rcimg{height:180px;overflow:hidden;position:relative;background:#1a1200;}
 .rcimg img{width:100%;height:100%;object-fit:cover;transition:transform .5s;}
 .rcard:hover .rcimg img{transform:scale(1.08);}
 .rrnk{position:absolute;top:12px;left:12px;background:rgba(18,13,0,.88);border:1px solid var(--gold);padding:4px 11px;border-radius:4px;font-size:.6rem;font-weight:700;color:var(--gold);text-transform:uppercase;}
 .rcbody{padding:1.3rem;}
-.rcname{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:700;margin-bottom:.2rem;}
+.rcname{font-family:"Cormorant Garamond",serif;font-size:1.4rem;font-weight:700;margin-bottom:.2rem;}
 .rcsub{font-size:.7rem;color:var(--muted);margin-bottom:1rem;}
 .rcstats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem;}
 .rcs{background:rgba(255,255,255,.04);border-radius:8px;padding:8px 11px;}
 .rcs .rsl{font-size:.58rem;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px;}
-.rcs .rsv{font-size:.86rem;font-weight:600;}.rsv.gd{color:var(--gold);}
+.rcs .rsv{font-size:.86rem;font-weight:600;color:var(--gold);}
 .reas{display:flex;flex-direction:column;gap:5px;}
 .rit{display:flex;align-items:flex-start;gap:7px;font-size:.7rem;color:rgba(240,230,208,.7);line-height:1.4;}
 .rdot{width:5px;height:5px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:4px;}
@@ -194,12 +195,12 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:19px;heigh
 @media(max-width:820px){.arow{grid-template-columns:1fr;}}
 .card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:1.6rem;}
 .ctit{font-size:.65rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:1.4rem;display:flex;align-items:center;gap:8px;}
-.ctit::after{content:'';flex:1;height:1px;background:var(--border);}
+.ctit::after{content:"";flex:1;height:1px;background:var(--border);}
 .wbig{text-align:center;padding:.5rem 0;}
-.wtemp{font-family:'Cormorant Garamond',serif;font-size:4.5rem;font-weight:900;color:var(--gold);line-height:1;}
-.wico2{font-size:3rem;margin:.5rem 0;}
+.wtemp{font-family:"Cormorant Garamond",serif;font-size:4.5rem;font-weight:900;color:var(--gold);line-height:1;}
+.wemoji{font-size:3rem;margin:.5rem 0;}
 .wcity{font-size:.72rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
-.wdesc{font-size:.88rem;text-transform:capitalize;margin-top:4px;}
+.wdesc2{font-size:.88rem;text-transform:capitalize;margin-top:4px;}
 .wst{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:1rem;}
 .ws{background:rgba(255,255,255,.04);border-radius:8px;padding:8px;text-align:center;}
 .ws .wl{font-size:.56rem;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;}
@@ -208,9 +209,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:19px;heigh
 .spl{font-size:.58rem;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;}
 .spv{font-size:.86rem;font-weight:600;}
 .chip{display:inline-block;font-size:.6rem;padding:3px 9px;border-radius:4px;background:rgba(200,149,26,.1);color:var(--gold);border:1px solid rgba(200,149,26,.2);margin:2px;}
-.sch{background:rgba(255,255,255,.03);border-left:2px solid var(--gold);border-radius:0 10px 10px 0;padding:10px 13px;margin-bottom:8px;}
-.sch h4{font-size:.83rem;font-weight:600;margin-bottom:2px;color:var(--cream);}
-.sch p{font-size:.7rem;color:var(--muted);line-height:1.5;}
+.gsch{background:rgba(255,255,255,.03);border-left:2px solid var(--gold);border-radius:0 10px 10px 0;padding:10px 13px;margin-bottom:8px;}
+.gsch h4{font-size:.83rem;font-weight:600;margin-bottom:2px;color:var(--cream);}
+.gsch p{font-size:.7rem;color:var(--muted);line-height:1.5;}
 .ctable{width:100%;border-collapse:collapse;font-size:.78rem;}
 .ctable th{padding:9px 11px;text-align:left;color:var(--muted);font-size:.6rem;text-transform:uppercase;letter-spacing:1.5px;border-bottom:1px solid var(--border);}
 .ctable td{padding:10px 11px;border-bottom:1px solid rgba(255,255,255,.04);}
@@ -225,7 +226,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:19px;heigh
 @media(max-width:480px){.ngrid{grid-template-columns:1fr;}}
 .nc{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:all .25s;}
 .nc:hover{border-color:var(--gold);transform:translateY(-3px);}
-.ni{height:125px;overflow:hidden;}
+.ni{height:125px;overflow:hidden;background:#1a1200;}
 .ni img{width:100%;height:100%;object-fit:cover;transition:transform .5s;}
 .nc:hover .ni img{transform:scale(1.08);}
 .nb{padding:.9rem;}
@@ -234,23 +235,51 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:19px;heigh
 .nb p{font-size:.7rem;color:var(--muted);line-height:1.5;}
 .ndt{font-size:.6rem;color:var(--muted);margin-top:6px;}
 #map{height:320px;border-radius:14px;overflow:hidden;}
-footer{background:#0a0800;border-top:1px solid var(--border);padding:3rem 2rem;text-align:center;}
-footer .flog{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:700;color:var(--gold);margin-bottom:.4rem;}
-footer p{font-size:.75rem;color:var(--muted);margin-bottom:3px;}
+footer{background:#080600;border-top:1px solid var(--border);padding:4rem 2rem 2rem;}
+.foot-grid{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:3rem;margin-bottom:3rem;}
+@media(max-width:700px){.foot-grid{grid-template-columns:1fr;gap:2rem;}}
+.flog-txt{font-family:"Cormorant Garamond",serif;font-size:1.6rem;font-weight:700;color:var(--gold);margin-bottom:.8rem;}
+.fdesc{font-size:.78rem;color:var(--muted);line-height:1.7;max-width:280px;}
+.ftitle{font-size:.65rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;font-weight:600;}
+.flink{font-size:.8rem;color:var(--muted);margin-bottom:.6rem;}
+.flink a{color:var(--muted);text-decoration:none;}
+.flink a:hover{color:var(--gold);}
+.fbot{max-width:1100px;margin:0 auto;border-top:1px solid var(--border);padding-top:1.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+.fbot p{font-size:.72rem;color:var(--muted);}
 </style>
 </head>
 <body>
-<header id="hdr"><div class="logo">🌿 KrishiAI</div><nav><a href="#how">How It Works</a><a href="#gallery">Crops</a><a href="#results">My Report</a></nav><button class="bcta" onclick="openForm()">Analyze My Land →</button></header>
+<header id="hdr">
+  <a class="logo" href="#">
+    <svg width="36" height="36" viewBox="0 0 40 40" fill="none">
+      <circle cx="20" cy="20" r="19" stroke="#c8951a" stroke-width="1.5" opacity=".4"/>
+      <path d="M20 32C20 32 10 26 10 18C10 12 14.5 8 20 8C25.5 8 30 12 30 18C30 26 20 32 20 32Z" fill="#1c3a1e" stroke="#4a7c59"/>
+      <path d="M20 8C20 8 15 14 20 20C25 14 20 8 20 8Z" fill="#c8951a"/>
+      <line x1="20" y1="20" x2="20" y2="31" stroke="#c8951a" stroke-width="1.2" opacity=".8"/>
+    </svg>
+    <div class="logo-text">KrishiAI<span class="logo-sub">Crop Profit Intelligence</span></div>
+  </a>
+  <nav>
+    <a href="#how">How It Works</a>
+    <a href="#gallery">Crops</a>
+    <a href="#results">My Report</a>
+  </nav>
+  <div class="hnav">
+    <button class="hlang" onclick="toggleLang()" id="langbtn">🇮🇳 हिंदी</button>
+    <button class="bcta" onclick="openForm()">Analyze My Land →</button>
+  </div>
+</header>
+
 <section id="hero">
   <div class="hbg" id="hbg"></div>
   <div class="ptcl" id="ptcl"></div>
   <div class="hc">
-    <div class="htag">🌾 AI Crop Profit Intelligence for Indian Farmers</div>
-    <h1 class="hh">Don't Guess.<br><em>Let Data Grow.</em></h1>
-    <p class="hp">Enter your land, budget and timeline. Our AI scores 22 crops across 6 parameters and tells you exactly which is most profitable — with full proof.</p>
+    <div class="htag" id="htag">🌾 AI Crop Profit Intelligence for Indian Farmers</div>
+    <h1 class="hh" id="hh">Don't Guess.<br><em>Let Data Grow.</em></h1>
+    <p class="hp" id="hp">Enter your land, budget and timeline. Our AI scores 22 crops across 6 parameters and tells you exactly which is most profitable — with full proof.</p>
     <div class="hbtns">
-      <button class="bprim" onclick="openForm()">Analyze My Land Free →</button>
-      <button class="boutl" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">See How It Works</button>
+      <button class="bprim" onclick="openForm()" id="hbtn1">Analyze My Land Free →</button>
+      <button class="boutl" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})" id="hbtn2">See How It Works</button>
     </div>
   </div>
   <div class="hstats">
@@ -260,7 +289,9 @@ footer p{font-size:.75rem;color:var(--muted);margin-bottom:3px;}
     <div class="hstat"><div class="num">Live</div><div class="lbl">Market Prices</div></div>
   </div>
 </section>
+
 <div class="tkwrap"><div class="tk" id="tk"></div></div>
+
 <section id="how"><div class="sw">
   <div class="ey reveal">The Process</div>
   <div class="stit reveal d1">Four Inputs.<br><em>One Perfect Recommendation.</em></div>
@@ -271,43 +302,102 @@ footer p{font-size:.75rem;color:var(--muted);margin-bottom:3px;}
     <div class="step reveal d4"><div class="snum">04</div><div class="sico">🤖</div><h3>AI Score</h3><p>22 crops scored on soil, water, ROI, risk, demand and govt support — ranked for you.</p></div>
   </div>
 </div></section>
+
 <section id="gallery">
-  <div class="gtit"><div class="ey reveal">22 Crops Analyzed</div><div class="stit reveal d1">Every Crop. <em>One Engine.</em></div></div>
-  <div id="gr1" class="grow gr1"></div><div style="height:.8rem"></div>
+  <div class="gtit">
+    <div class="ey reveal">22 Crops Analyzed</div>
+    <div class="stit reveal d1">Every Crop. <em>One Engine.</em></div>
+  </div>
+  <div id="gr1" class="grow gr1"></div>
+  <div style="height:.8rem"></div>
   <div id="gr2" class="grow gr2"></div>
 </section>
+
+<!-- FORM MODAL -->
 <div class="modal-ov" id="fmod">
   <div class="modal">
     <button class="mcl" onclick="closeForm()">✕</button>
-    <div class="pbar"><div class="ps on" id="ps1"></div><div class="ps" id="ps2"></div><div class="ps" id="ps3"></div><div class="ps" id="ps4"></div></div>
+    <div class="pbar">
+      <div class="ps on" id="ps1"></div>
+      <div class="ps" id="ps2"></div>
+      <div class="ps" id="ps3"></div>
+      <div class="ps" id="ps4"></div>
+    </div>
+    <!-- Step 1 -->
     <div class="fst on" id="st1">
-      <div class="ftit">📍 Your Location</div><div class="fsub">We auto-detect soil type from your district</div>
+      <div class="ftit">📍 Your Location</div>
+      <div class="fsub">We auto-detect soil type from your district</div>
       <div class="fg">
-        <div class="fl2"><label>State</label><select id="sState" onchange="updDist()"><option value="karnataka">Karnataka</option><option value="maharashtra">Maharashtra</option><option value="andhra">Andhra Pradesh</option><option value="tamilnadu">Tamil Nadu</option><option value="telangana">Telangana</option><option value="gujarat">Gujarat</option><option value="other">Other</option></select></div>
-        <div class="fl2"><label>District</label><select id="sDist" onchange="autoSoil()"></select></div>
+        <div class="fl2">
+          <label>State</label>
+          <select id="sState" onchange="updDist()">
+            <option value="karnataka">Karnataka</option>
+            <option value="maharashtra">Maharashtra</option>
+            <option value="andhra">Andhra Pradesh</option>
+            <option value="tamilnadu">Tamil Nadu</option>
+            <option value="telangana">Telangana</option>
+            <option value="gujarat">Gujarat</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="fl2">
+          <label>District</label>
+          <select id="sDist" onchange="autoSoil()"></select>
+        </div>
       </div>
-      <div class="fl2"><label>Village / Taluk (optional)</label><input type="text" placeholder="e.g. Hunsur, Channapatna..."/></div>
-      <div class="sdbox" id="sdb"><div style="font-size:1.5rem">🔬</div><div><strong id="sdt"></strong><span id="sdi"></span></div></div>
+      <div class="sdbox" id="sdb">
+        <div style="font-size:1.5rem">🔬</div>
+        <div><strong id="sdt"></strong><span id="sdi"></span></div>
+      </div>
       <div class="fnav"><button class="bnx" onclick="goSt(2)">Next: Land →</button></div>
     </div>
+    <!-- Step 2 -->
     <div class="fst" id="st2">
-      <div class="ftit">🌍 Land Details</div><div class="fsub">Land size, type and soil</div>
-      <div class="rw"><label>Land Area <span id="lv">3 Acres</span></label><input type="range" min="0.5" max="100" step="0.5" value="3" oninput="document.getElementById('lv').textContent=this.value+' Acres';fd.land=parseFloat(this.value)"/></div>
-      <div class="fl2"><label>Land Type</label>
+      <div class="ftit">🌍 Land Details</div>
+      <div class="fsub">Tell us about your land</div>
+      <div class="rw">
+        <label>Land Area <span id="lv">3 Acres</span></label>
+        <input type="range" min="0.5" max="100" step="0.5" value="3" oninput="document.getElementById('lv').textContent=this.value+' Acres';fd.land=parseFloat(this.value)"/>
+      </div>
+      <div class="fl2">
+        <label>Land Type</label>
         <div class="rgp">
           <div class="rc on" onclick="selLT(this,'dry')"><span class="ri">🏜️</span><span class="rl">Dry / Rainfed</span></div>
           <div class="rc" onclick="selLT(this,'semi')"><span class="ri">🌤️</span><span class="rl">Semi-Irrigated</span></div>
           <div class="rc" onclick="selLT(this,'irrigated')"><span class="ri">💧</span><span class="rl">Well Irrigated</span></div>
         </div>
       </div>
-      <div class="fl2"><label>Soil Override</label><select id="soilOv" onchange="fd.soil=this.value"><option value="auto">Auto-detect from district</option><option value="red-laterite">Red Laterite</option><option value="black-cotton">Black Cotton</option><option value="alluvial">Alluvial</option><option value="sandy">Sandy Loam</option><option value="red-rocky">Red Rocky</option><option value="laterite-coastal">Coastal Laterite</option></select></div>
-      <div class="fnav"><button class="bbk" onclick="goSt(1)">← Back</button><button class="bnx" onclick="goSt(3)">Next: Budget →</button></div>
+      <div class="fl2">
+        <label>Soil Override</label>
+        <select id="soilOv" onchange="fd.soil=this.value">
+          <option value="auto">Auto-detect from district</option>
+          <option value="red-laterite">Red Laterite</option>
+          <option value="black-cotton">Black Cotton</option>
+          <option value="alluvial">Alluvial</option>
+          <option value="sandy">Sandy Loam</option>
+          <option value="red-rocky">Red Rocky</option>
+          <option value="laterite-coastal">Coastal Laterite</option>
+        </select>
+      </div>
+      <div class="fnav">
+        <button class="bbk" onclick="goSt(1)">← Back</button>
+        <button class="bnx" onclick="goSt(3)">Next: Budget →</button>
+      </div>
     </div>
+    <!-- Step 3 -->
     <div class="fst" id="st3">
-      <div class="ftit">💰 Investment & Time</div><div class="fsub">How much and how long?</div>
-      <div class="rw"><label>Budget per Acre <span id="bv">₹80,000</span></label><input type="range" min="10000" max="500000" step="5000" value="80000" oninput="updB(this.value)"/></div>
-      <div class="rw"><label>Time Horizon <span id="tv">5 Years</span></label><input type="range" id="tsl" min="3" max="240" step="3" value="60" oninput="updT(this.value)"/></div>
-      <div class="fl2"><label>Quick Presets</label>
+      <div class="ftit">💰 Investment & Time</div>
+      <div class="fsub">How much and how long?</div>
+      <div class="rw">
+        <label>Budget per Acre <span id="bv">₹80,000</span></label>
+        <input type="range" min="10000" max="500000" step="5000" value="80000" oninput="updB(this.value)"/>
+      </div>
+      <div class="rw">
+        <label>Time Horizon <span id="tv">5 Years</span></label>
+        <input type="range" id="tsl" min="3" max="240" step="3" value="60" oninput="updT(this.value)"/>
+      </div>
+      <div class="fl2">
+        <label>Quick Presets</label>
         <div class="pbs">
           <button class="pb" onclick="setT(6,'6 Months')">⚡ 6 Mo</button>
           <button class="pb" onclick="setT(24,'2 Years')">📅 2 Yr</button>
@@ -316,172 +406,446 @@ footer p{font-size:.75rem;color:var(--muted);margin-bottom:3px;}
           <button class="pb" onclick="setT(180,'15 Years')">🌲 15 Yr</button>
         </div>
       </div>
-      <div class="fnav"><button class="bbk" onclick="goSt(2)">← Back</button><button class="bnx" onclick="goSt(4)">Next: Resources →</button></div>
+      <div class="fnav">
+        <button class="bbk" onclick="goSt(2)">← Back</button>
+        <button class="bnx" onclick="goSt(4)">Next: Resources →</button>
+      </div>
     </div>
+    <!-- Step 4 -->
     <div class="fst" id="st4">
-      <div class="ftit">💧 Resources & Goals</div><div class="fsub">Last step!</div>
-      <div class="fl2"><label>Water Source</label>
-        <div class="ci on" onclick="togCk(this,'rainfall')"><input type="checkbox" checked/><label>🌧️ Rainfall Only</label></div>
-        <div class="ci" onclick="togCk(this,'borewell')"><input type="checkbox"/><label>🔩 Borewell / Dug Well</label></div>
-        <div class="ci" onclick="togCk(this,'canal')"><input type="checkbox"/><label>🌊 Canal / River</label></div>
-        <div class="ci" onclick="togCk(this,'drip')"><input type="checkbox"/><label>💦 Drip / Sprinkler</label></div>
+      <div class="ftit">💧 Resources & Goals</div>
+      <div class="fsub">Last step — almost there!</div>
+      <div class="fl2">
+        <label>Water Source</label>
+        <div class="ci on" id="wci0" onclick="togCk(this,'rainfall')"><input type="checkbox" checked/><label>🌧️ Rainfall Only</label></div>
+        <div class="ci" id="wci1" onclick="togCk(this,'borewell')"><input type="checkbox"/><label>🔩 Borewell / Dug Well</label></div>
+        <div class="ci" id="wci2" onclick="togCk(this,'canal')"><input type="checkbox"/><label>🌊 Canal / River</label></div>
+        <div class="ci" id="wci3" onclick="togCk(this,'drip')"><input type="checkbox"/><label>💦 Drip / Sprinkler</label></div>
       </div>
       <div class="fg">
-        <div class="fl2"><label>Market Access</label><select onchange="fd.mkt=this.value"><option value="local">Local APMC</option><option value="district">District Market</option><option value="national" selected>National / Export</option></select></div>
-        <div class="fl2"><label>Priority Goal</label><select onchange="fd.pri=this.value"><option value="profit">Max Total Profit</option><option value="stable">Stable Income</option><option value="quick">Quick Returns</option><option value="lowrisk">Low Risk</option></select></div>
+        <div class="fl2">
+          <label>Market Access</label>
+          <select onchange="fd.mkt=this.value">
+            <option value="local">Local APMC</option>
+            <option value="district">District Market</option>
+            <option value="national" selected>National / Export</option>
+          </select>
+        </div>
+        <div class="fl2">
+          <label>Priority Goal</label>
+          <select onchange="fd.pri=this.value">
+            <option value="profit">Max Total Profit</option>
+            <option value="stable">Stable Income</option>
+            <option value="quick">Quick Returns</option>
+            <option value="lowrisk">Low Risk</option>
+          </select>
+        </div>
       </div>
-      <div class="fnav"><button class="bbk" onclick="goSt(3)">← Back</button><button class="bnx" style="background:var(--green);border:1px solid #4a7c59;color:var(--cream);padding:13px 32px;font-size:.86rem;" onclick="runAI()">🤖 Analyze My Land →</button></div>
+      <div class="fnav">
+        <button class="bbk" onclick="goSt(3)">← Back</button>
+        <button class="bnx" style="background:#1c3a1e;border:1px solid #4a7c59;color:var(--cream);font-size:.86rem;padding:13px 32px;" onclick="runAI()">🤖 Analyze My Land →</button>
+      </div>
     </div>
   </div>
 </div>
-<div id="ls"><div class="lring"><div class="lic">🌾</div></div><div class="lti">KrishiAI Analyzing</div><div class="lsu">Processing your land profile</div><div class="lft" id="lft">Mapping district to soil database...</div><div class="lpb"><div class="lpf" id="lpf" style="width:0%"></div></div></div>
-<section id="results"><div class="rc2">
-  <div class="fbar reveal" id="fbar"></div>
-  <div class="reveal"><div class="ey">AI Recommendation</div><div class="stit" style="font-size:clamp(1.6rem,3.5vw,2.6rem);margin-bottom:1.5rem">Best Crop: <em id="tcname">—</em></div></div>
-  <div class="trec reveal" id="trec"><div class="trbg" id="trbg"></div><div class="trov"></div><div class="trco" id="trco"></div><div class="scring" id="scring"></div></div>
-  <div class="why reveal" id="why"></div>
-  <div style="margin-bottom:1rem;font-size:.65rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);" class="reveal">Also Recommended</div>
-  <div class="rgrid" id="rgrid"></div>
-  <div class="arow reveal">
-    <div class="card"><div class="ctit">📊 Profit Comparison</div><canvas id="pc" style="max-height:250px"></canvas></div>
-    <div class="card"><div class="ctit">🌤️ Live Weather</div><div id="wc"></div></div>
+
+<!-- LOADER -->
+<div id="ls">
+  <div class="lring"><div class="lic">🌾</div></div>
+  <div class="lti">KrishiAI Analyzing</div>
+  <div class="lsu">Processing your land profile</div>
+  <div class="lft" id="lft">Mapping district to soil database...</div>
+  <div class="lpb"><div class="lpf" id="lpf" style="width:0%"></div></div>
+</div>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="rc2">
+    <div class="fbar reveal" id="fbar"></div>
+    <div class="reveal">
+      <div class="ey">AI Recommendation</div>
+      <div class="stit" style="font-size:clamp(1.6rem,3.5vw,2.6rem);margin-bottom:1.5rem">Best Crop: <em id="tcname">—</em></div>
+    </div>
+    <div class="trec reveal" id="trec">
+      <div class="trbg" id="trbg"></div>
+      <div class="trov"></div>
+      <div class="trco" id="trco"></div>
+      <div class="scring" id="scring"></div>
+    </div>
+    <div class="why reveal" id="why"></div>
+    <div class="ey reveal" style="margin-bottom:1rem">Also Recommended</div>
+    <div class="rgrid" id="rgrid"></div>
+    <div class="arow reveal">
+      <div class="card"><div class="ctit">📊 Profit Comparison</div><canvas id="pc" style="max-height:250px"></canvas></div>
+      <div class="card"><div class="ctit">🌤️ Live Weather</div><div id="wc"><div style="text-align:center;padding:2rem;color:var(--muted);font-size:.82rem">Loading weather...</div></div></div>
+    </div>
+    <div class="arow reveal">
+      <div class="card"><div class="ctit">📈 ROI % Comparison</div><canvas id="rchart" style="max-height:230px"></canvas></div>
+      <div class="card"><div class="ctit">⚖️ Risk vs Reward</div><canvas id="rvchart" style="max-height:230px"></canvas></div>
+    </div>
+    <div class="arow reveal">
+      <div class="card"><div class="ctit">🔬 Soil Analysis</div><div id="scont"></div></div>
+      <div class="card"><div class="ctit">🏛️ Govt Schemes</div><div id="schl"></div></div>
+    </div>
+    <div class="card reveal" style="margin-bottom:1.4rem">
+      <div class="ctit">🏆 Full Ranking</div>
+      <div style="overflow-x:auto"><table class="ctable" id="rtbl"></table></div>
+    </div>
+    <div class="card reveal" style="margin-bottom:1.4rem">
+      <div class="ctit">🗺️ District Map</div>
+      <div id="map"></div>
+    </div>
+    <div class="ey reveal" style="margin-bottom:1rem">Market News</div>
+    <div class="ngrid" id="ngrid"></div>
+    <div style="text-align:center;margin:3rem 0 1rem">
+      <button class="bprim" onclick="openForm()">↺ Reanalyze</button>
+    </div>
   </div>
-  <div class="arow reveal">
-    <div class="card"><div class="ctit">📈 ROI % Comparison</div><canvas id="rc" style="max-height:230px"></canvas></div>
-    <div class="card"><div class="ctit">⚖️ Risk vs Reward</div><canvas id="rvc" style="max-height:230px"></canvas></div>
+</section>
+
+<footer>
+  <div class="foot-grid">
+    <div>
+      <div class="flog-txt">🌿 KrishiAI</div>
+      <p class="fdesc">AI-powered crop profit advisory for Indian farmers. Enter your land details and get the most profitable crop recommendation — backed by data.</p>
+    </div>
+    <div>
+      <div class="ftitle">Quick Links</div>
+      <div class="flink">🌿 <a href="#how">How It Works</a></div>
+      <div class="flink">🌾 <a href="#gallery">Crop Gallery</a></div>
+      <div class="flink">📊 <a href="#results">My Report</a></div>
+      <div class="flink">🤖 <a href="#" onclick="openForm();return false;">Analyze My Land</a></div>
+    </div>
+    <div>
+      <div class="ftitle">Contact Us</div>
+      <div class="flink">📧 <a href="mailto:kethannu@gmail.com">kethannu@gmail.com</a></div>
+      <div class="flink">📱 <a href="tel:+919741423898">+91 97414 23898</a></div>
+      <div class="flink">🌐 <a href="https://kethannu.github.io/krishiai" target="_blank">kethannu.github.io/krishiai</a></div>
+      <div class="flink" style="margin-top:.8rem;font-size:.72rem;color:var(--muted)">📍 Karnataka, India</div>
+    </div>
   </div>
-  <div class="arow reveal">
-    <div class="card"><div class="ctit">🔬 Soil Analysis</div><div id="scont"></div></div>
-    <div class="card"><div class="ctit">🏛️ Govt Schemes</div><div id="schl"></div></div>
+  <div class="fbot">
+    <p>© 2025 KrishiAI — Built for Indian Farmers 🌿</p>
+    <p>22 Crops · 30+ Karnataka Districts · Live Weather · APMC Prices</p>
   </div>
-  <div class="card reveal" style="margin-bottom:1.4rem"><div class="ctit">🏆 Full Ranking Table</div><div style="overflow-x:auto"><table class="ctable" id="rtbl"></table></div></div>
-  <div class="card reveal" style="margin-bottom:1.4rem"><div class="ctit">🗺️ District Map</div><div id="map"></div></div>
-  <div class="ey reveal" style="margin-bottom:1rem">Market News</div>
-  <div class="ngrid" id="ngrid"></div>
-  <div style="text-align:center;margin:3rem 0 1rem"><button class="bprim" onclick="openForm()">↺ Reanalyze</button></div>
-</div></section>
-<footer><div class="flog">🌿 KrishiAI</div><p>AI Crop Profit Advisory · Powered by OpenWeatherMap</p><p>22 Crops · 30+ Karnataka Districts · Live APMC Prices</p></footer>
+</footer>
+
 <script>
-const AK="75b8f5f37af352406ad7a212511a9575";
+const AK = "75b8f5f37af352406ad7a212511a9575";
+let isHindi = false;
+let fd = {state:"karnataka",dist:"Bengaluru Urban",land:3,lt:"dry",soil:"auto",budget:80000,time:60,water:["rainfall"],mkt:"national",pri:"profit"};
+let curSt = 1;
+
 // Scroll reveal
-const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');obs.unobserve(e.target);}}),{threshold:.1,rootMargin:'0px 0px -40px 0px'});
-function obsAll(){document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));}
-document.addEventListener('DOMContentLoaded',obsAll);
-window.addEventListener('scroll',()=>document.getElementById('hdr').classList.toggle('sc',window.scrollY>60));
-window.addEventListener('load',()=>{document.getElementById('hbg').classList.add('ld');particles();});
-function particles(){const c=document.getElementById('ptcl');for(let i=0;i<16;i++){const p=document.createElement('div');p.className='p';p.style.cssText=`left:${Math.random()*100}%;width:${1+Math.random()*3}px;height:${1+Math.random()*3}px;animation-duration:${9+Math.random()*11}s;animation-delay:${Math.random()*10}s;`;c.appendChild(p);}}
-// Farmer data
-let fd={state:'karnataka',dist:'Bengaluru Urban',land:3,lt:'dry',soil:'auto',budget:80000,time:60,water:['rainfall'],mkt:'national',pri:'profit'};
-const DISTS={karnataka:["Bengaluru Urban","Bengaluru Rural","Tumkur","Kolar","Chikkaballapur","Mysuru","Chamarajanagar","Mandya","Hassan","Kodagu","Shivamogga","Chikkamagaluru","Dharwad","Belagavi","Vijayapura","Bagalkot","Gadag","Haveri","Uttara Kannada","Dakshina Kannada","Udupi","Raichur","Ballari","Koppal","Yadgir","Kalaburagi","Bidar","Chitradurga","Davanagere","Vijayanagara"],maharashtra:["Pune","Mumbai","Nashik","Nagpur","Aurangabad","Solapur"],andhra:["Vijayawada","Visakhapatnam","Guntur","Kurnool","Kadapa","Anantapur"],tamilnadu:["Chennai","Coimbatore","Madurai","Salem","Trichy","Thanjavur"],telangana:["Hyderabad","Warangal","Karimnagar","Khammam","Nizamabad"],gujarat:["Ahmedabad","Surat","Vadodara","Rajkot","Gandhinagar"],other:["Other District"]};
-const DS={"bengaluru urban":{s:"red-laterite",z:"semi-arid",r:970,la:12.97,ln:77.59},"bengaluru rural":{s:"red-laterite",z:"semi-arid",r:850,la:13.0,ln:77.4},"tumkur":{s:"red-laterite",z:"semi-arid",r:800,la:13.34,ln:77.1},"kolar":{s:"red-laterite",z:"semi-arid",r:780,la:13.13,ln:78.13},"chikkaballapur":{s:"red-laterite",z:"semi-arid",r:750,la:13.44,ln:77.73},"mysuru":{s:"red-laterite",z:"semi-humid",r:820,la:12.3,ln:76.65},"chamarajanagar":{s:"red-laterite",z:"dry",r:700,la:11.92,ln:76.94},"mandya":{s:"red-alluvial",z:"irrigated",r:780,la:12.52,ln:76.9},"hassan":{s:"red-laterite",z:"semi-humid",r:1200,la:13.0,ln:76.1},"kodagu":{s:"red-laterite",z:"humid",r:2000,la:12.42,ln:75.74},"shivamogga":{s:"red-laterite",z:"semi-humid",r:1500,la:13.93,ln:75.56},"chikkamagaluru":{s:"red-laterite",z:"humid",r:1800,la:13.32,ln:75.78},"dharwad":{s:"black-cotton",z:"semi-arid",r:820,la:15.46,ln:75.01},"belagavi":{s:"black-cotton",z:"semi-arid",r:950,la:15.85,ln:74.5},"vijayapura":{s:"black-cotton",z:"dry",r:550,la:16.83,ln:75.72},"bagalkot":{s:"black-cotton",z:"dry",r:580,la:16.18,ln:75.7},"gadag":{s:"black-cotton",z:"semi-arid",r:680,la:15.43,ln:75.63},"haveri":{s:"black-cotton",z:"semi-arid",r:780,la:14.79,ln:75.4},"uttara kannada":{s:"red-laterite",z:"humid",r:2500,la:14.8,ln:74.13},"dakshina kannada":{s:"laterite-coastal",z:"humid",r:3000,la:12.87,ln:75.0},"udupi":{s:"laterite-coastal",z:"humid",r:3500,la:13.34,ln:74.74},"raichur":{s:"black-alluvial",z:"dry",r:650,la:16.21,ln:77.36},"ballari":{s:"black-red",z:"dry",r:650,la:15.14,ln:76.92},"koppal":{s:"black-red",z:"dry",r:600,la:15.35,ln:76.15},"yadgir":{s:"black-cotton",z:"dry",r:600,la:16.77,ln:77.14},"kalaburagi":{s:"black-cotton",z:"semi-arid",r:730,la:17.33,ln:76.82},"bidar":{s:"black-cotton",z:"semi-arid",r:850,la:17.91,ln:77.52},"chitradurga":{s:"red-rocky",z:"semi-arid",r:650,la:14.23,ln:76.4},"davanagere":{s:"black-red",z:"semi-arid",r:800,la:14.47,ln:75.92},"vijayanagara":{s:"red-rocky",z:"dry",r:600,la:15.13,ln:76.47}};
-const SI={"red-laterite":{n:"Red Laterite",c:"#b5451b",ph:"5.5-6.5",nit:"Low",moi:"Moderate",best:["Sandalwood","Coffee","Areca Nut","Ragi","Dragon Fruit"]},"black-cotton":{n:"Black Cotton",c:"#2c2c2c",ph:"7.5-8.5",nit:"High",moi:"High",best:["Cotton","Turmeric","Sorghum","Sunflower","Grapes"]},"alluvial":{n:"Alluvial",c:"#8b7355",ph:"6.5-7.5",nit:"Medium",moi:"Good",best:["Rice","Sugarcane","Banana","Maize"]},"red-alluvial":{n:"Red Alluvial",c:"#a0522d",ph:"6.0-7.0",nit:"Medium",moi:"Good",best:["Sugarcane","Rice","Banana","Coconut"]},"sandy":{n:"Sandy Loam",c:"#c2b280",ph:"6.0-7.5",nit:"Low",moi:"Low",best:["Coconut","Cashew","Watermelon","Dragon Fruit"]},"red-rocky":{n:"Red Rocky",c:"#8b4513",ph:"5.5-6.5",nit:"Very Low",moi:"Very Low",best:["Sandalwood","Bamboo","Teak","Pomegranate"]},"laterite-coastal":{n:"Coastal Laterite",c:"#cd7f32",ph:"5.0-6.0",nit:"Low",moi:"High",best:["Coconut","Areca Nut","Pepper","Coffee"]},"black-alluvial":{n:"Black Alluvial",c:"#36454f",ph:"7.0-8.0",nit:"High",moi:"Very High",best:["Rice","Cotton","Sugarcane","Banana"]},"black-red":{n:"Mixed Black-Red",c:"#5c4033",ph:"6.5-7.5",nit:"Medium",moi:"Moderate",best:["Cotton","Sunflower","Pomegranate","Turmeric"]}};
-const CROPS=[
-{id:"sandalwood",n:"Sandalwood",ico:"🌳",img:"https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=800&q=80",soils:["red-laterite","red-rocky","laterite-coastal","black-red"],wn:"low",lts:["dry","semi"],inv:75000,mnt:8000,mo:180,rev:3600000,risk:"low",why:["Heartwood: ₹8,000-15,000/kg internationally","Karnataka Govt sets guaranteed minimum price yearly","Zero irrigation after Year 2 — pure dry land crop","No major pest on record in Karnataka","Carbon credits: ₹500-800 per tree per year","Price appreciation: 12-15% annually"],sch:["Karnataka Sandalwood Policy 2020","CAMPA Afforestation Fund","Forest Dept 75% sapling subsidy","Carbon Credit Programme"],desc:"India's gold. Govt guaranteed price. Zero irrigation after Year 2. Best dry land long-term crop.",pros:["Drought resistant","Govt guaranteed price","12%/yr appreciation"],cons:["15yr wait","Harvest licence required"]},
-{id:"dragonfruit",n:"Dragon Fruit",ico:"🐉",img:"https://images.unsplash.com/photo-1526318472351-c6c55e77b28b?auto=format&fit=crop&w=800&q=80",soils:["red-laterite","sandy","red-rocky","laterite-coastal"],wn:"low",lts:["dry","semi"],inv:180000,mnt:30000,mo:24,rev:1050000,risk:"medium",why:["₹120-300/kg — India's fastest growing premium fruit","Cactus: thrives on just 500mm rainfall","4 harvest cycles per year — near-monthly income","Supermarket demand grew 500% in 3 years","LED night lighting boosts yield by 30% more"],sch:["NHB 50% Capital Subsidy","MIDH Horticulture Scheme","PM Kisan","Drip Irrigation 75% Subsidy"],desc:"Explosive superfood demand. Minimal water. Premium price. 4 harvests per year.",pros:["Very high price","4 harvests/yr","Minimal water"],cons:["High setup cost","Pole trellising required"]},
-{id:"moringa",n:"Moringa",ico:"🌿",img:"https://images.unsplash.com/photo-1519624014191-508652836cd6?auto=format&fit=crop&w=800&q=80",soils:["red-laterite","sandy","red-rocky","black-red"],wn:"low",lts:["dry","semi"],inv:20000,mnt:8000,mo:10,rev:675000,risk:"low",why:["Leaf powder: ₹800-2,000/kg to USA and Europe","Grows in worst dryland — zero extra water needed","Ready in 10 months with very low investment","USA health supplement demand up 400% in 3 years","Karnataka has ideal climate for export quality"],sch:["NHB Moringa Scheme","Spice Board Export Incentive","Organic Certification Support","APEDA Export Facilitation"],desc:"World's most nutritious plant. Leaf powder exports 10× value of pods.",pros:["Extreme drought tolerance","Leaf powder premium","US-EU export boom"],cons:["Processing needed for premium price","Seasonal price variation"]},
-{id:"pomegranate",n:"Pomegranate",ico:"🔴",img:"https://images.unsplash.com/photo-1615484477778-ca3b77940c25?auto=format&fit=crop&w=800&q=80",soils:["red-rocky","red-laterite","black-red","black-cotton"],wn:"low",lts:["dry","semi"],inv:120000,mnt:25000,mo:36,rev:600000,risk:"medium",why:["₹60-120/kg farm gate in peak season","Survives on just 600mm rain — true drought tolerant","20+ year productive lifespan per tree","Vijayapura-Bagalkot belt: India's top pomegranate zone","Export quality fetches 2× domestic farm price"],sch:["NHB Pomegranate Scheme","Drip Irrigation 75% Subsidy","MIDH Capital Subsidy"],desc:"Drought-tolerant fruit with 20-year bearing life. North Karnataka dry land advantage.",pros:["Drought tolerant","20yr bearing","Export premium"],cons:["Bacterial blight risk","Drip irrigation ideal"]},
-{id:"teak",n:"Teak Wood",ico:"🌲",img:"https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=800&q=80",soils:["red-laterite","alluvial","black-red","red-rocky"],wn:"low",lts:["dry","semi","irrigated"],inv:55000,mnt:6000,mo:180,rev:450000,risk:"low",why:["₹3,000-5,000 per cubic foot — premium furniture timber","Intercrop with vegetables for first 4 years of income","Govt nursery subsidized saplings available","Very low maintenance once established","Consistent global furniture and flooring demand"],sch:["Social Forestry Scheme","Agroforestry Mission","NABARD Teak Loan"],desc:"Premium hardwood with global demand. Intercrop for early income. Low maintenance.",pros:["Low maintenance","Intercrop income","Export demand"],cons:["15yr harvest","Export licence needed"]},
-{id:"turmeric",n:"Turmeric",ico:"🌾",img:"https://images.unsplash.com/photo-1615485500704-8e990f9900f7?auto=format&fit=crop&w=800&q=80",soils:["black-cotton","alluvial","red-alluvial","black-red"],wn:"medium",lts:["semi","irrigated"],inv:65000,mnt:0,mo:9,rev:300000,risk:"low",why:["India supplies 80% of global turmeric — we own the market","Organic: ₹250-400/kg (3× MSP rate)","Curcumin extract at ₹1,500/kg to pharma companies","Ready in 9 months — fastest spice cash crop","Post-harvest processing adds 300% more value"],sch:["Spice Board India Subsidy","NHB Turmeric Development","Organic Certification"],desc:"India owns global turmeric market. Organic premium doubles your income.",pros:["Global demand","9mo harvest","Organic premium"],cons:["Needs irrigation","Root rot if waterlogged"]},
-{id:"bamboo",n:"Bamboo",ico:"🎍",img:"https://images.unsplash.com/photo-1444492417251-9c84a5fa18e0?auto=format&fit=crop&w=800&q=80",soils:["red-laterite","alluvial","red-rocky","black-red","black-cotton"],wn:"low",lts:["dry","semi","irrigated"],inv:25000,mnt:3000,mo:48,rev:144000,risk:"very-low",why:["Carbon credits: ₹8,000-15,000 per acre per year","Annual harvest from Year 4 for 26+ more years","30-year no-replanting lifespan — one-time cost","Bamboo fiber: ₹6,000-10,000/kg to textile industry","Construction: ₹100-200 per culm in local markets"],sch:["National Bamboo Mission","Bamboo Cluster Dev Scheme","Carbon Credit Programme"],desc:"30-year sustainable crop earning carbon credits every year without selling timber.",pros:["Carbon credits","30yr lifespan","Zero water need"],cons:["4yr wait first harvest","Needs local buyer network"]},
-{id:"areca",n:"Areca Nut",ico:"🌴",img:"https://images.unsplash.com/photo-1526289034009-0240ddb68ce3?auto=format&fit=crop&w=800&q=80",soils:["laterite-coastal","red-laterite","alluvial"],wn:"high",lts:["irrigated","semi"],inv:60000,mnt:20000,mo:96,rev:400000,risk:"medium",why:["₹400-700/kg — highest value crop in Karnataka","Karnataka grows 70% of India's entire arecanut supply","15 years of 12-18% annual price increase consistently","Shimoga, Hassan, DK: prime growing zone advantage","Intercrop black pepper (₹800/kg) on same land"],sch:["Arecanut Development Programme","Coastal Zone Horticulture","Malnad Special Scheme"],desc:"Karnataka's crown crop. 70% of India's supply. Prices only go up since 15 years.",pros:["Extremely high value","70% India supply","Intercrop income"],cons:["8yr first harvest","Koleroga disease risk"]},
-{id:"coffee",n:"Coffee",ico:"☕",img:"https://images.unsplash.com/photo-1447933601403-0c6688de66cf?auto=format&fit=crop&w=800&q=80",soils:["red-laterite","laterite-coastal"],wn:"high",lts:["irrigated","semi"],inv:90000,mnt:30000,mo:60,rev:210000,risk:"medium",why:["Kodagu coffee is globally sought — premium brand","Specialty to Starbucks & Blue Bottle: ₹1,200/kg","60-year productive lifespan — generational asset","Coffee tourism: ₹50,000-2L per season income","Direct trade to EU roasters removes all middlemen"],sch:["Coffee Board Replanting Subsidy","Coffee Board Export Incentive","Specialty Coffee Programme"],desc:"Kodagu coffee is world-famous. Specialty segment gives 3× commodity price.",pros:["World-famous origin","60yr lifespan","Tourism income"],cons:["5yr first harvest","Climate sensitive"]},
-{id:"cotton",n:"Cotton",ico:"☁️",img:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=800&q=80",soils:["black-cotton","black-alluvial","black-red"],wn:"medium",lts:["dry","semi"],inv:40000,mnt:0,mo:6,rev:52000,risk:"medium",why:["MSP ₹6,620/quintal — Cotton Corp guaranteed purchase","Traditional north Karnataka black soil crop","Bt Cotton reduced pesticide costs by 50%","Dharwad, Gadag, Haveri prime belt","Stalk used as cattle fodder — zero waste"],sch:["Cotton MSP ₹6,620/quintal","PMFBY Crop Insurance","Bt Cotton Seed Subsidy"],desc:"MSP-protected traditional north Karnataka crop with govt procurement guarantee.",pros:["MSP guarantee","Established market","Low water"],cons:["Bollworm risk","Low margin per acre"]},
-{id:"banana",n:"Banana",ico:"🍌",img:"https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?auto=format&fit=crop&w=800&q=80",soils:["alluvial","red-alluvial","black-alluvial","black-red"],wn:"high",lts:["irrigated"],inv:85000,mnt:15000,mo:14,rev:540000,risk:"medium",why:["Tissue culture: 35-40 tonnes per acre yield","Ratoon crop = 2nd harvest with zero replanting cost","₹12-25/kg with direct daily buyer contracts","Ready market to commission agents same day","Mandya and Mysuru irrigation zone is ideal"],sch:["NHB Banana Development","Tissue Culture 50% Subsidy","SFAC Market Linkage"],desc:"High-yield irrigated crop. Ratoon gives free second harvest. Daily ready market.",pros:["High yield","Free ratoon harvest","Daily ready market"],cons:["Huge water need","Panama wilt risk"]},
-{id:"pepper",n:"Black Pepper",ico:"🌶️",img:"https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=800&q=80",soils:["laterite-coastal","red-laterite","alluvial"],wn:"high",lts:["irrigated","semi"],inv:85000,mnt:25000,mo:36,rev:400000,risk:"medium",why:["₹600-1,200/kg — world's highest value spice","India is world's largest pepper exporter","Kodagu, Shimoga, DK: perfect climate advantage","Grow as intercrop on areca — free income on same land","Export to EU and USA fetches Malabar premium"],sch:["Spice Board India Subsidy","Pepper Development Programme","GI Tag Malabar Pepper"],desc:"King of Spices. India's top export spice. Kodagu advantage is globally unmatched.",pros:["₹800+/kg price","Export premium","Intercrop on areca"],cons:["3yr harvest","Phytophthora disease risk"]},
-{id:"sugarcane",n:"Sugarcane",ico:"🎋",img:"https://images.unsplash.com/photo-1567522936027-2f2e39c19f50?auto=format&fit=crop&w=800&q=80",soils:["alluvial","red-alluvial","black-alluvial"],wn:"high",lts:["irrigated"],inv:55000,mnt:10000,mo:18,rev:144000,risk:"low",why:["FRP ₹315/quintal govt price — zero market risk","Factory purchase 100% assured before you plant","3 ratoon crops without replanting saves ₹1.5L","Bagasse as biofuel: extra ₹8,000 per acre","Mandya Sugar Factory has direct farmer contracts"],sch:["FRP ₹315/quintal Guaranteed","PMFBY Insurance","Mandya Factory Direct Linkage"],desc:"Zero market risk. FRP guaranteed. Factory buys 100%. 3 ratoons save replanting cost.",pros:["Assured govt purchase","FRP price fixed","3 ratoons free"],cons:["Massive water need","Low per-kg price"]},
-{id:"ragi",n:"Ragi / Finger Millet",ico:"🌾",img:"https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&w=800&q=80",soils:["red-laterite","red-rocky","sandy","black-red"],wn:"low",lts:["dry"],inv:12000,mnt:0,mo:4,rev:42000,risk:"very-low",why:["UN Year of Millets 2023 — global health food demand boom","Organic ragi: ₹80-120/kg (3× MSP)","Minimal water — true dryland crop","Zero fertilizer with traditional organic farming","Karnataka Govt target: double ragi production by 2025"],sch:["MSP for Ragi","Millets Mission India 2023","Zero Budget Natural Farming"],desc:"Karnataka's dryland staple. Organic premium and Millets Mission driving demand.",pros:["Zero water","Zero fertilizer","Health trend premium"],cons:["Low absolute profit","Labor intensive harvest"]},
-{id:"coconut",n:"Coconut",ico:"🥥",img:"https://images.unsplash.com/photo-1519996529931-28324d5a630e?auto=format&fit=crop&w=800&q=80",soils:["laterite-coastal","sandy","red-laterite"],wn:"medium",lts:["semi","irrigated"],inv:40000,mnt:15000,mo:84,rev:143000,risk:"low",why:["60-year bearing lifespan — generational income","Every part sells: nut, copra, water, coir","Coastal Karnataka: DK and Udupi prime zone","Intercrop cocoa, pepper, banana underneath","Neera sap health drink: ₹80-120 per litre"],sch:["Coconut Development Board","Rejuvenation Scheme","Coconut Palm Insurance"],desc:"Lifetime crop. 60 years of income. Every part sells. Coastal Karnataka advantage.",pros:["60yr lifespan","Every part sold","Intercrop income"],cons:["7yr first harvest","Rhinoceros beetle risk"]},
-{id:"maize",n:"Maize / Corn",ico:"🌽",img:"https://images.unsplash.com/photo-1551754655-cd27e38d2076?auto=format&fit=crop&w=800&q=80",soils:["alluvial","red-laterite","black-red","red-alluvial"],wn:"medium",lts:["semi","irrigated"],inv:22000,mnt:0,mo:4,rev:80000,risk:"low",why:["Dual use: food + animal feed + ethanol — always sold","MSP ₹1,962/quintal minimum guaranteed","Baby corn: ₹60-100/kg — 5× the grain price","Karnataka poultry needs 8 lakh tonnes/year","2 crops/year on semi-irrigated land possible"],sch:["MSP ₹1,962/quintal","PMFBY Insurance","Ethanol Blending Programme"],desc:"Versatile MSP crop. Baby corn gives 5× price. Poultry industry guarantees demand.",pros:["MSP protected","Baby corn premium","2 crops/yr"],cons:["Yield drops in heat stress","Fall armyworm pest"]},
-{id:"grapes",n:"Grapes",ico:"🍇",img:"https://images.unsplash.com/photo-1537640538966-79f369143f8f?auto=format&fit=crop&w=800&q=80",soils:["black-cotton","black-red","alluvial"],wn:"medium",lts:["semi","irrigated"],inv:250000,mnt:50000,mo:24,rev:960000,risk:"high",why:["Bijapur-Bagalkot climate matches Napa Valley, California","Wine grapes: ₹150-400/kg (3× table grape price)","EU certified export with GAP certification possible","Karnataka govt building Wine Park infrastructure","Cold chain to premium urban markets for table grapes"],sch:["Grape Development Programme","NHB Capital Subsidy","Karnataka Wine Policy"],desc:"Bijapur-Bagalkot is India's Napa Valley. Wine grapes command 3× price.",pros:["Very high value","Wine premium","EU export"],cons:["Very high investment","Skilled pruning required"]},
-{id:"tomato",n:"Tomato",ico:"🍅",img:"https://images.unsplash.com/photo-1546094096-0df4bcabd337?auto=format&fit=crop&w=800&q=80",soils:["red-laterite","alluvial","black-red","sandy"],wn:"medium",lts:["semi","irrigated"],inv:55000,mnt:0,mo:4,rev:400000,risk:"high",why:["₹10-60/kg — complete cycle in just 4 months","3 crops per year possible with planning","Kolar-Chikkaballapur: India's top tomato belt","FPO linkage reduces price crash risk significantly","Polyhouse gives 2× price control year-round"],sch:["National Horticulture Mission","PM Kisan","SFAC FPO Linkage"],desc:"Fastest return vegetable. Kolar belt supplies all south India. 3 crops/year possible.",pros:["4mo harvest","3 crops/yr","High price potential"],cons:["Severe price crash risk","Disease prone in humidity"]},
-{id:"watermelon",n:"Watermelon",ico:"🍉",img:"https://images.unsplash.com/photo-1563114773-84221bd62daa?auto=format&fit=crop&w=800&q=80",soils:["sandy","red-laterite","alluvial","black-red"],wn:"medium",lts:["semi","irrigated"],inv:35000,mnt:0,mo:3,rev:300000,risk:"medium",why:["₹8-20/kg farm gate — massive volume summer crop","Ready in just 3 months","Sandy dry land is perfect — low irrigation overhead","2 crops: summer + post-monsoon window","Direct selling to highways and urban markets"],sch:["NHB Horticulture Scheme","Drip Irrigation Subsidy","PM Kisan"],desc:"High-volume 3-month summer crop. Uses dry sandy land nobody else wants.",pros:["3mo harvest","High volume","Uses marginal land"],cons:["Price varies wildly","Short shelf life"]},
-{id:"cashew",n:"Cashew",ico:"🥜",img:"https://images.unsplash.com/photo-1535483912213-0e71b3a21e38?auto=format&fit=crop&w=800&q=80",soils:["laterite-coastal","sandy","red-laterite"],wn:"low",lts:["dry","semi"],inv:45000,mnt:10000,mo:48,rev:120000,risk:"low",why:["₹120-200/kg raw nut — processing adds 3× value","Udupi and DK coastal Karnataka is prime cashew zone","Thrives on poor laterite nobody else can use","40-year lifespan — generational income","Kernel export: ₹800-1,200/kg to USA and Europe"],sch:["Cashew Development Board","Coastal Horticulture Scheme","APEDA Export Incentive"],desc:"Coastal Karnataka gem. Poor soil advantage. Kernel export gives 3× value.",pros:["Poor soil tolerant","40yr lifespan","Kernel export premium"],cons:["4yr first harvest","Anthracnose disease risk"]},
-{id:"sunflower",n:"Sunflower",ico:"🌻",img:"https://images.unsplash.com/photo-1470509037663-253d2d33e9f3?auto=format&fit=crop&w=800&q=80",soils:["black-cotton","black-red","red-laterite","alluvial"],wn:"medium",lts:["dry","semi"],inv:15000,mnt:0,mo:3,rev:38500,risk:"low",why:["Fastest MSP crop: 90-day cycle — 4 per year possible","MSP ₹6,760/quintal — zero price risk","Free seeds and fertilizer under Oilseeds Mission","Drought tolerant — grows on 400mm rainfall","Stalk is excellent cattle fodder — zero waste"],sch:["MSP ₹6,760/quintal","National Oilseeds Mission","PMFBY Insurance"],desc:"India's fastest MSP crop. 90-day cycle means 4 crops per year.",pros:["MSP protected","90-day cycle","4 crops/yr"],cons:["Low profit per cycle","Capital borer pest"]},
-{id:"rice",n:"Rice / Paddy",ico:"🌾",img:"https://images.unsplash.com/photo-1536054958244-a32c87571de7?auto=format&fit=crop&w=800&q=80",soils:["alluvial","red-alluvial","black-alluvial"],wn:"very-high",lts:["irrigated"],inv:30000,mnt:0,mo:5,rev:55000,risk:"low",why:["FCI govt procurement — 100% of harvest is bought","MSP ₹2,183/quintal guaranteed always","Cauvery basin: Mandya, Mysuru perfect zone","Tractor and combine harvester rental available","Kharif + Rabi = 2 crops per year"],sch:["MSP ₹2,183/quintal","FCI Procurement Guaranteed","PM Kisan ₹6,000/yr"],desc:"Zero-risk staple. Government guaranteed FCI procurement. 2 crops per year.",pros:["Govt guaranteed purchase","2 crops/yr","Zero market risk"],cons:["Huge water need","Low net profit per acre"]}
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting){e.target.classList.add("on");obs.unobserve(e.target);} });
+},{threshold:.1,rootMargin:"0px 0px -40px 0px"});
+function obsAll(){ document.querySelectorAll(".reveal").forEach(el=>obs.observe(el)); }
+document.addEventListener("DOMContentLoaded", obsAll);
+window.addEventListener("scroll",()=>document.getElementById("hdr").classList.toggle("sc",window.scrollY>60));
+window.addEventListener("load",()=>{document.getElementById("hbg").classList.add("ld");makeParticles();});
+
+function makeParticles(){
+  const c=document.getElementById("ptcl");
+  for(let i=0;i<16;i++){
+    const p=document.createElement("div");p.className="pt";
+    p.style.cssText="left:"+Math.random()*100+"%;width:"+(1+Math.random()*3)+"px;height:"+(1+Math.random()*3)+"px;animation-duration:"+(9+Math.random()*11)+"s;animation-delay:"+Math.random()*10+"s;";
+    c.appendChild(p);
+  }
+}
+
+// Hindi toggle
+function toggleLang(){
+  isHindi=!isHindi;
+  const b=document.getElementById("langbtn");
+  b.textContent=isHindi?"🇬🇧 English":"🇮🇳 हिंदी";
+  if(isHindi){
+    document.getElementById("htag").textContent="🌾 भारतीय किसानों के लिए AI फसल लाभ विश्लेषण";
+    document.getElementById("hh").innerHTML="अनुमान मत लगाओ।<br><em>डेटा को उगने दो।</em>";
+    document.getElementById("hp").textContent="अपनी जमीन, बजट और समय बताएं। हमारा AI 22 फसलों का विश्लेषण करके बताता है कि कौन सी सबसे ज्यादा मुनाफेदार है।";
+    document.getElementById("hbtn1").textContent="मुफ्त विश्लेषण करें →";
+    document.getElementById("hbtn2").textContent="देखें कैसे काम करता है";
+  } else {
+    document.getElementById("htag").textContent="🌾 AI Crop Profit Intelligence for Indian Farmers";
+    document.getElementById("hh").innerHTML="Don\'t Guess.<br><em>Let Data Grow.</em>";
+    document.getElementById("hp").textContent="Enter your land, budget and timeline. Our AI scores 22 crops across 6 parameters and tells you exactly which is most profitable — with full proof.";
+    document.getElementById("hbtn1").textContent="Analyze My Land Free →";
+    document.getElementById("hbtn2").textContent="See How It Works";
+  }
+}
+
+// Districts
+const DISTS={
+  karnataka:["Bengaluru Urban","Bengaluru Rural","Tumkur","Kolar","Chikkaballapur","Mysuru","Chamarajanagar","Mandya","Hassan","Kodagu","Shivamogga","Chikkamagaluru","Dharwad","Belagavi","Vijayapura","Bagalkot","Gadag","Haveri","Uttara Kannada","Dakshina Kannada","Udupi","Raichur","Ballari","Koppal","Yadgir","Kalaburagi","Bidar","Chitradurga","Davanagere","Vijayanagara"],
+  maharashtra:["Pune","Mumbai","Nashik","Nagpur","Aurangabad","Solapur"],
+  andhra:["Vijayawada","Visakhapatnam","Guntur","Kurnool","Kadapa","Anantapur"],
+  tamilnadu:["Chennai","Coimbatore","Madurai","Salem","Trichy","Thanjavur"],
+  telangana:["Hyderabad","Warangal","Karimnagar","Khammam","Nizamabad"],
+  gujarat:["Ahmedabad","Surat","Vadodara","Rajkot","Gandhinagar"],
+  other:["Other District"]
+};
+const DS={
+  "bengaluru urban":{s:"red-laterite",z:"semi-arid",r:970,la:12.97,ln:77.59},
+  "bengaluru rural":{s:"red-laterite",z:"semi-arid",r:850,la:13.0,ln:77.4},
+  "tumkur":{s:"red-laterite",z:"semi-arid",r:800,la:13.34,ln:77.1},
+  "kolar":{s:"red-laterite",z:"semi-arid",r:780,la:13.13,ln:78.13},
+  "chikkaballapur":{s:"red-laterite",z:"semi-arid",r:750,la:13.44,ln:77.73},
+  "mysuru":{s:"red-laterite",z:"semi-humid",r:820,la:12.3,ln:76.65},
+  "chamarajanagar":{s:"red-laterite",z:"dry",r:700,la:11.92,ln:76.94},
+  "mandya":{s:"red-alluvial",z:"irrigated",r:780,la:12.52,ln:76.9},
+  "hassan":{s:"red-laterite",z:"semi-humid",r:1200,la:13.0,ln:76.1},
+  "kodagu":{s:"red-laterite",z:"humid",r:2000,la:12.42,ln:75.74},
+  "shivamogga":{s:"red-laterite",z:"semi-humid",r:1500,la:13.93,ln:75.56},
+  "chikkamagaluru":{s:"red-laterite",z:"humid",r:1800,la:13.32,ln:75.78},
+  "dharwad":{s:"black-cotton",z:"semi-arid",r:820,la:15.46,ln:75.01},
+  "belagavi":{s:"black-cotton",z:"semi-arid",r:950,la:15.85,ln:74.5},
+  "vijayapura":{s:"black-cotton",z:"dry",r:550,la:16.83,ln:75.72},
+  "bagalkot":{s:"black-cotton",z:"dry",r:580,la:16.18,ln:75.7},
+  "gadag":{s:"black-cotton",z:"semi-arid",r:680,la:15.43,ln:75.63},
+  "haveri":{s:"black-cotton",z:"semi-arid",r:780,la:14.79,ln:75.4},
+  "uttara kannada":{s:"red-laterite",z:"humid",r:2500,la:14.8,ln:74.13},
+  "dakshina kannada":{s:"laterite-coastal",z:"humid",r:3000,la:12.87,ln:75.0},
+  "udupi":{s:"laterite-coastal",z:"humid",r:3500,la:13.34,ln:74.74},
+  "raichur":{s:"black-alluvial",z:"dry",r:650,la:16.21,ln:77.36},
+  "ballari":{s:"black-red",z:"dry",r:650,la:15.14,ln:76.92},
+  "koppal":{s:"black-red",z:"dry",r:600,la:15.35,ln:76.15},
+  "yadgir":{s:"black-cotton",z:"dry",r:600,la:16.77,ln:77.14},
+  "kalaburagi":{s:"black-cotton",z:"semi-arid",r:730,la:17.33,ln:76.82},
+  "bidar":{s:"black-cotton",z:"semi-arid",r:850,la:17.91,ln:77.52},
+  "chitradurga":{s:"red-rocky",z:"semi-arid",r:650,la:14.23,ln:76.4},
+  "davanagere":{s:"black-red",z:"semi-arid",r:800,la:14.47,ln:75.92},
+  "vijayanagara":{s:"red-rocky",z:"dry",r:600,la:15.13,ln:76.47}
+};
+const SI={
+  "red-laterite":{n:"Red Laterite",c:"#b5451b",ph:"5.5-6.5",nit:"Low",moi:"Moderate",best:["Sandalwood","Coffee","Areca Nut","Ragi","Dragon Fruit"]},
+  "black-cotton":{n:"Black Cotton",c:"#2c2c2c",ph:"7.5-8.5",nit:"High",moi:"High",best:["Cotton","Turmeric","Sunflower","Grapes"]},
+  "alluvial":{n:"Alluvial",c:"#8b7355",ph:"6.5-7.5",nit:"Medium",moi:"Good",best:["Rice","Sugarcane","Banana","Maize"]},
+  "red-alluvial":{n:"Red Alluvial",c:"#a0522d",ph:"6.0-7.0",nit:"Medium",moi:"Good",best:["Sugarcane","Rice","Banana","Coconut"]},
+  "sandy":{n:"Sandy Loam",c:"#c2b280",ph:"6.0-7.5",nit:"Low",moi:"Low",best:["Coconut","Cashew","Watermelon","Dragon Fruit"]},
+  "red-rocky":{n:"Red Rocky",c:"#8b4513",ph:"5.5-6.5",nit:"Very Low",moi:"Very Low",best:["Sandalwood","Bamboo","Teak","Pomegranate"]},
+  "laterite-coastal":{n:"Coastal Laterite",c:"#cd7f32",ph:"5.0-6.0",nit:"Low",moi:"High",best:["Coconut","Areca Nut","Pepper","Coffee"]},
+  "black-alluvial":{n:"Black Alluvial",c:"#36454f",ph:"7.0-8.0",nit:"High",moi:"Very High",best:["Rice","Cotton","Sugarcane","Banana"]},
+  "black-red":{n:"Mixed Black-Red",c:"#5c4033",ph:"6.5-7.5",nit:"Medium",moi:"Moderate",best:["Cotton","Sunflower","Pomegranate","Turmeric"]}
+};
+
+// CROPS with fixed images
+const CROPS = [
+  {id:"sandalwood",n:"Sandalwood",ico:"🌳",img:"https://images.unsplash.com/photo-1448375240586-882707db888b?w=800&q=80",soils:["red-laterite","red-rocky","laterite-coastal","black-red"],wn:"low",lts:["dry","semi"],inv:75000,mnt:8000,mo:180,rev:3600000,risk:"low",why:["Heartwood: ₹8,000-15,000/kg internationally","Karnataka Govt guaranteed minimum price yearly","Zero irrigation after Year 2 — pure dry land crop","No major pest on record in Karnataka","Carbon credits: ₹500-800 per tree per year","Price appreciation: 12-15% annually"],sch:["Karnataka Sandalwood Policy 2020","CAMPA Afforestation Fund","Forest Dept 75% sapling subsidy","Carbon Credit Programme"],desc:"India\'s gold. Govt guaranteed price. Zero irrigation after Year 2."},
+  {id:"dragonfruit",n:"Dragon Fruit",ico:"🐉",img:"https://images.unsplash.com/photo-1526318472351-c6c55e77b28b?w=800&q=80",soils:["red-laterite","sandy","red-rocky","laterite-coastal"],wn:"low",lts:["dry","semi"],inv:180000,mnt:30000,mo:24,rev:1050000,risk:"medium",why:["₹120-300/kg — India\'s fastest growing premium fruit","Cactus family: thrives on just 500mm rainfall","4 harvest cycles per year — near-monthly income","Supermarket demand grew 500% in 3 years","LED night lighting boosts yield by 30%"],sch:["NHB 50% Capital Subsidy","MIDH Horticulture Scheme","PM Kisan","Drip Irrigation 75% Subsidy"],desc:"Explosive superfood demand. Minimal water. Premium price. 4 harvests/year."},
+  {id:"moringa",n:"Moringa",ico:"🌿",img:"https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&q=80",soils:["red-laterite","sandy","red-rocky","black-red"],wn:"low",lts:["dry","semi"],inv:20000,mnt:8000,mo:10,rev:675000,risk:"low",why:["Leaf powder: ₹800-2,000/kg to USA and Europe","Grows in worst dryland — zero extra water needed","Ready in 10 months with very low investment","USA health supplement demand up 400% in 3 years","Karnataka ideal climate for export quality"],sch:["NHB Moringa Scheme","Spice Board Export Incentive","Organic Certification Support","APEDA Export"],desc:"World\'s most nutritious plant. Leaf powder exports 10x value of pods."},
+  {id:"pomegranate",n:"Pomegranate",ico:"🔴",img:"https://images.unsplash.com/photo-1615484477778-ca3b77940c25?w=800&q=80",soils:["red-rocky","red-laterite","black-red","black-cotton"],wn:"low",lts:["dry","semi"],inv:120000,mnt:25000,mo:36,rev:600000,risk:"medium",why:["₹60-120/kg farm gate in peak season","Survives on just 600mm rain — drought tolerant","20+ year productive lifespan per tree","Vijayapura-Bagalkot: India\'s top pomegranate zone","Export quality fetches 2x domestic price"],sch:["NHB Pomegranate Scheme","Drip Irrigation 75% Subsidy","MIDH Capital Subsidy"],desc:"Drought-tolerant fruit with 20-year bearing life. North Karnataka advantage."},
+  {id:"teak",n:"Teak Wood",ico:"🌲",img:"https://images.unsplash.com/photo-1541123437800-1bb1317badc2?w=800&q=80",soils:["red-laterite","alluvial","black-red","red-rocky"],wn:"low",lts:["dry","semi","irrigated"],inv:55000,mnt:6000,mo:180,rev:450000,risk:"low",why:["₹3,000-5,000 per cubic foot — premium timber","Intercrop with vegetables for first 4 years","Govt nursery provides subsidized saplings","Very low maintenance once established","Consistent global furniture demand"],sch:["Social Forestry Scheme","Agroforestry Mission","NABARD Teak Loan"],desc:"Premium hardwood. Global demand. Intercrop for early income. Low maintenance."},
+  {id:"turmeric",n:"Turmeric",ico:"🌾",img:"https://images.unsplash.com/photo-1615485500704-8e990f9900f7?w=800&q=80",soils:["black-cotton","alluvial","red-alluvial","black-red"],wn:"medium",lts:["semi","irrigated"],inv:65000,mnt:0,mo:9,rev:300000,risk:"low",why:["India supplies 80% of global turmeric","Organic: ₹250-400/kg (3x MSP rate)","Curcumin extract ₹1,500/kg to pharma","Ready in 9 months — fastest spice crop","Post-harvest processing adds 300% value"],sch:["Spice Board India Subsidy","NHB Turmeric Development","Organic Certification"],desc:"India owns global turmeric market. Organic premium doubles your income."},
+  {id:"bamboo",n:"Bamboo",ico:"🎍",img:"https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?w=800&q=80",soils:["red-laterite","alluvial","red-rocky","black-red","black-cotton"],wn:"low",lts:["dry","semi","irrigated"],inv:25000,mnt:3000,mo:48,rev:144000,risk:"very-low",why:["Carbon credits: ₹8,000-15,000 per acre/year","Annual harvest from Year 4 for 26+ more years","30-year no-replanting lifespan","Bamboo fiber: ₹6,000-10,000/kg to textile industry","Construction: ₹100-200 per culm locally"],sch:["National Bamboo Mission","Bamboo Cluster Dev Scheme","Carbon Credit Programme"],desc:"30-year sustainable crop earning carbon credits every year."},
+  {id:"areca",n:"Areca Nut",ico:"🌴",img:"https://images.unsplash.com/photo-1526289034009-0240ddb68ce3?w=800&q=80",soils:["laterite-coastal","red-laterite","alluvial"],wn:"high",lts:["irrigated","semi"],inv:60000,mnt:20000,mo:96,rev:400000,risk:"medium",why:["₹400-700/kg — highest value crop in Karnataka","Karnataka grows 70% of India\'s arecanut supply","15 years of 12-18% annual price increase","Shimoga, Hassan, DK: prime growing zone","Intercrop black pepper (₹800/kg) same land"],sch:["Arecanut Development Programme","Coastal Zone Horticulture","Malnad Special Scheme"],desc:"Karnataka\'s crown crop. 70% of India\'s supply. Prices rise every year."},
+  {id:"coffee",n:"Coffee",ico:"☕",img:"https://images.unsplash.com/photo-1506619216599-9d16d0903dfd?w=800&q=80",soils:["red-laterite","laterite-coastal"],wn:"high",lts:["irrigated","semi"],inv:90000,mnt:30000,mo:60,rev:210000,risk:"medium",why:["Kodagu coffee is globally sought-after","Specialty to Starbucks: ₹1,200/kg","60-year productive lifespan — generational asset","Coffee tourism: ₹50,000-2L per season income","Direct trade to EU roasters removes middlemen"],sch:["Coffee Board Replanting Subsidy","Coffee Board Export Incentive","Specialty Coffee Programme"],desc:"Kodagu coffee is world-famous. Specialty gives 3x commodity price."},
+  {id:"cotton",n:"Cotton",ico:"☁️",img:"https://images.unsplash.com/photo-1594035910387-fea47794261f?w=800&q=80",soils:["black-cotton","black-alluvial","black-red"],wn:"medium",lts:["dry","semi"],inv:40000,mnt:0,mo:6,rev:52000,risk:"medium",why:["MSP ₹6,620/quintal — Cotton Corp guaranteed buy","Traditional north Karnataka black soil crop","Bt Cotton reduced pesticide costs by 50%","Dharwad, Gadag, Haveri: prime belt","Stalk used as cattle fodder — zero waste"],sch:["Cotton MSP ₹6,620/quintal","PMFBY Crop Insurance","Bt Cotton Seed Subsidy"],desc:"MSP-protected north Karnataka crop. Govt procurement guaranteed."},
+  {id:"banana",n:"Banana",ico:"🍌",img:"https://images.unsplash.com/photo-1528825871115-3581a5387919?w=800&q=80",soils:["alluvial","red-alluvial","black-alluvial","black-red"],wn:"high",lts:["irrigated"],inv:85000,mnt:15000,mo:14,rev:540000,risk:"medium",why:["Tissue culture: 35-40 tonnes per acre yield","Ratoon crop = 2nd harvest zero replanting cost","₹12-25/kg with direct buyer contracts","Ready market to agents same day","Mandya and Mysuru irrigation zone ideal"],sch:["NHB Banana Development","Tissue Culture 50% Subsidy","SFAC Market Linkage"],desc:"High-yield irrigated crop. Ratoon gives free second harvest. Daily market."},
+  {id:"pepper",n:"Black Pepper",ico:"🌶️",img:"https://images.unsplash.com/photo-1599420186946-7b6fb4e297f0?w=800&q=80",soils:["laterite-coastal","red-laterite","alluvial"],wn:"high",lts:["irrigated","semi"],inv:85000,mnt:25000,mo:36,rev:400000,risk:"medium",why:["₹600-1,200/kg — world\'s highest value spice","India is world\'s largest pepper exporter","Kodagu, Shimoga, DK: perfect climate advantage","Grow as intercrop on areca — free income","EU and USA pay Malabar GI premium"],sch:["Spice Board India Subsidy","Pepper Development Programme","GI Tag Malabar Pepper"],desc:"King of Spices. India\'s top export spice. Kodagu is world\'s best zone."},
+  {id:"sugarcane",n:"Sugarcane",ico:"🎋",img:"https://images.unsplash.com/photo-1567522936027-2f2e39c19f50?w=800&q=80",soils:["alluvial","red-alluvial","black-alluvial"],wn:"high",lts:["irrigated"],inv:55000,mnt:10000,mo:18,rev:144000,risk:"low",why:["FRP ₹315/quintal govt price — zero market risk","Factory purchase 100% assured before planting","3 ratoon crops without replanting saves cost","Bagasse as biofuel: extra ₹8,000/acre","Mandya Sugar Factory direct farmer contracts"],sch:["FRP ₹315/quintal Guaranteed","PMFBY Insurance","Mandya Factory Direct"],desc:"Zero market risk. FRP guaranteed. Factory buys 100%. 3 free ratoons."},
+  {id:"ragi",n:"Ragi / Finger Millet",ico:"🌾",img:"https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=800&q=80",soils:["red-laterite","red-rocky","sandy","black-red"],wn:"low",lts:["dry"],inv:12000,mnt:0,mo:4,rev:42000,risk:"very-low",why:["UN Year of Millets 2023 — global health demand boom","Organic ragi: ₹80-120/kg (3x MSP)","True dryland crop — minimal water needed","Zero fertilizer with traditional farming","Karnataka Govt: double ragi production by 2025"],sch:["MSP for Ragi","Millets Mission India 2023","Zero Budget Natural Farming"],desc:"Karnataka\'s dryland staple. Millets Mission and organic premium rising."},
+  {id:"coconut",n:"Coconut",ico:"🥥",img:"https://images.unsplash.com/photo-1580984969071-a8da5656c2fb?w=800&q=80",soils:["laterite-coastal","sandy","red-laterite"],wn:"medium",lts:["semi","irrigated"],inv:40000,mnt:15000,mo:84,rev:143000,risk:"low",why:["60-year bearing lifespan — generational income","Every part sells: nut, copra, water, coir","Coastal Karnataka: DK and Udupi prime zone","Intercrop cocoa, pepper, banana underneath","Neera sap health drink: ₹80-120 per litre"],sch:["Coconut Development Board","Rejuvenation Scheme","Coconut Palm Insurance"],desc:"Lifetime crop. 60 years of income. Every part sells. Coastal advantage."},
+  {id:"maize",n:"Maize / Corn",ico:"🌽",img:"https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=800&q=80",soils:["alluvial","red-laterite","black-red","red-alluvial"],wn:"medium",lts:["semi","irrigated"],inv:22000,mnt:0,mo:4,rev:80000,risk:"low",why:["Dual use: food + animal feed + ethanol","MSP ₹1,962/quintal minimum guaranteed","Baby corn: ₹60-100/kg — 5x grain price","Karnataka poultry needs 8 lakh tonnes/year","2 crops/year on semi-irrigated land"],sch:["MSP ₹1,962/quintal","PMFBY Insurance","Ethanol Blending Programme"],desc:"Versatile MSP crop. Baby corn gives 5x price. Always in demand."},
+  {id:"grapes",n:"Grapes",ico:"🍇",img:"https://images.unsplash.com/photo-1506802913710-000644651aee?w=800&q=80",soils:["black-cotton","black-red","alluvial"],wn:"medium",lts:["semi","irrigated"],inv:250000,mnt:50000,mo:24,rev:960000,risk:"high",why:["Bijapur-Bagalkot climate matches Napa Valley","Wine grapes: ₹150-400/kg (3x table grape)","EU certified export with GAP certification","Karnataka govt building Wine Park","Cold chain to premium urban markets"],sch:["Grape Development Programme","NHB Capital Subsidy","Karnataka Wine Policy"],desc:"Bijapur-Bagalkot is India\'s Napa Valley. Wine grapes command 3x price."},
+  {id:"tomato",n:"Tomato",ico:"🍅",img:"https://images.unsplash.com/photo-1592841200221-a6898f307baa?w=800&q=80",soils:["red-laterite","alluvial","black-red","sandy"],wn:"medium",lts:["semi","irrigated"],inv:55000,mnt:0,mo:4,rev:400000,risk:"high",why:["₹10-60/kg — complete cycle in 4 months","3 crops per year possible with planning","Kolar-Chikkaballapur: India\'s top tomato belt","FPO linkage reduces price crash risk","Polyhouse gives 2x price control year-round"],sch:["National Horticulture Mission","PM Kisan","SFAC FPO Linkage"],desc:"Fastest return vegetable. Kolar belt supplies all south India. 3 crops/yr."},
+  {id:"watermelon",n:"Watermelon",ico:"🍉",img:"https://images.unsplash.com/photo-1563114773-84221bd62daa?w=800&q=80",soils:["sandy","red-laterite","alluvial","black-red"],wn:"medium",lts:["semi","irrigated"],inv:35000,mnt:0,mo:3,rev:300000,risk:"medium",why:["₹8-20/kg farm gate — massive volume crop","Ready in just 3 months","Sandy dry land is perfect for watermelon","2 crops: summer + post-monsoon window","Direct selling to highways and urban markets"],sch:["NHB Horticulture Scheme","Drip Irrigation Subsidy","PM Kisan"],desc:"High-volume 3-month summer crop. Uses dry sandy land perfectly."},
+  {id:"cashew",n:"Cashew",ico:"🥜",img:"https://images.unsplash.com/photo-1571680322279-a226e6a4cc2a?w=800&q=80",soils:["laterite-coastal","sandy","red-laterite"],wn:"low",lts:["dry","semi"],inv:45000,mnt:10000,mo:48,rev:120000,risk:"low",why:["₹120-200/kg raw nut — processing adds 3x value","Udupi and DK coastal Karnataka is prime zone","Thrives on poor laterite nobody else uses","40-year lifespan — generational income","Kernel export: ₹800-1,200/kg to USA, Europe"],sch:["Cashew Development Board","Coastal Horticulture Scheme","APEDA Export Incentive"],desc:"Coastal Karnataka gem. Poor soil advantage. Kernel export gives 3x value."},
+  {id:"sunflower",n:"Sunflower",ico:"🌻",img:"https://images.unsplash.com/photo-1597848212624-a19eb35e2651?w=800&q=80",soils:["black-cotton","black-red","red-laterite","alluvial"],wn:"medium",lts:["dry","semi"],inv:15000,mnt:0,mo:3,rev:38500,risk:"low",why:["Fastest MSP crop: 90-day cycle — 4 per year","MSP ₹6,760/quintal — zero price risk","Free seeds and fertilizer under Oilseeds Mission","Drought tolerant — grows on 400mm rainfall","Stalk is excellent cattle fodder — zero waste"],sch:["MSP ₹6,760/quintal","National Oilseeds Mission","PMFBY Insurance"],desc:"India\'s fastest MSP crop. 90-day cycle means 4 crops per year."},
+  {id:"rice",n:"Rice / Paddy",ico:"🌾",img:"https://images.unsplash.com/photo-1536054958244-a32c87571de7?w=800&q=80",soils:["alluvial","red-alluvial","black-alluvial"],wn:"very-high",lts:["irrigated"],inv:30000,mnt:0,mo:5,rev:55000,risk:"low",why:["FCI govt procurement — 100% of harvest bought","MSP ₹2,183/quintal always guaranteed","Cauvery basin: Mandya, Mysuru perfect zone","Tractor and combine harvester rental available","Kharif + Rabi = 2 crops per year"],sch:["MSP ₹2,183/quintal","FCI Procurement Guaranteed","PM Kisan ₹6,000/yr"],desc:"Zero-risk staple. Government guaranteed FCI procurement. 2 crops/year."}
 ];
+
+// Ticker
+const TK=[{n:"Sandalwood",p:"₹9,800/kg",c:"+4.2%",u:1},{n:"Black Pepper",p:"₹820/kg",c:"+2.8%",u:1},{n:"Areca Nut",p:"₹520/kg",c:"+1.8%",u:1},{n:"Dragon Fruit",p:"₹185/kg",c:"+12.3%",u:1},{n:"Turmeric",p:"₹140/kg",c:"-2.1%",u:0},{n:"Cotton",p:"₹65/kg",c:"+0.5%",u:1},{n:"Pomegranate",p:"₹78/kg",c:"+3.7%",u:1},{n:"Moringa",p:"₹52/kg",c:"+6.2%",u:1},{n:"Cashew",p:"₹162/kg",c:"+1.4%",u:1},{n:"Banana",p:"₹19/kg",c:"-1.2%",u:0},{n:"Ragi",p:"₹38/kg",c:"+2.0%",u:1},{n:"Grapes",p:"₹82/kg",c:"+5.1%",u:1},{n:"Coffee",p:"₹380/kg",c:"+8.4%",u:1},{n:"Tomato",p:"₹24/kg",c:"-8.5%",u:0},{n:"Coconut",p:"₹24/nut",c:"+1.1%",u:1},{n:"Maize",p:"₹22/kg",c:"+0.8%",u:1}];
+document.getElementById("tk").innerHTML=[...TK,...TK].map(t=>"<div class=\"ti\"><span class=\"tn\">"+t.n+"</span><span class=\"tp\">"+t.p+"</span><span class=\""+(t.u?"tu":"td")+"\">"+t.c+"</span></div>").join("");
+
+// Gallery
 function buildGallery(){
-  const h=Math.ceil(CROPS.length/2),r1=CROPS.slice(0,h),r2=CROPS.slice(h);
-  const mk=c=>`<div class="gi"><img src="${c.img}" alt="${c.n}" loading="lazy"/><div class="gilbl">${c.ico} ${c.n}<div class="giprice">₹${(c.rev/100000).toFixed(1)}L gross estimate</div></div></div>`;
-  document.getElementById('gr1').innerHTML=[...r1,...r1].map(mk).join('');
-  document.getElementById('gr2').innerHTML=[...r2,...r2].map(mk).join('');
+  const fb="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=400&q=60";
+  const h=Math.ceil(CROPS.length/2);
+  const mk=c=>"<div class=\"gi\"><img src=\""+c.img+"\" alt=\""+c.n+"\" loading=\"lazy\" onerror=\"this.src=\'"+fb+"\'\" /><div class=\"gilbl\">"+c.ico+" "+c.n+"<div class=\"giprice\">₹"+(c.rev/100000).toFixed(1)+"L gross estimate</div></div></div>";
+  document.getElementById("gr1").innerHTML=[...CROPS.slice(0,h),...CROPS.slice(0,h)].map(mk).join("");
+  document.getElementById("gr2").innerHTML=[...CROPS.slice(h),...CROPS.slice(h)].map(mk).join("");
 }
 buildGallery();
-const TK=[{n:"Sandalwood",p:"₹9,800/kg",c:"+4.2%",u:1},{n:"Black Pepper",p:"₹820/kg",c:"+2.8%",u:1},{n:"Areca Nut",p:"₹520/kg",c:"+1.8%",u:1},{n:"Dragon Fruit",p:"₹185/kg",c:"+12.3%",u:1},{n:"Turmeric",p:"₹140/kg",c:"-2.1%",u:0},{n:"Cotton",p:"₹65/kg",c:"+0.5%",u:1},{n:"Pomegranate",p:"₹78/kg",c:"+3.7%",u:1},{n:"Moringa",p:"₹52/kg",c:"+6.2%",u:1},{n:"Cashew",p:"₹162/kg",c:"+1.4%",u:1},{n:"Banana",p:"₹19/kg",c:"-1.2%",u:0},{n:"Ragi",p:"₹38/kg",c:"+2.0%",u:1},{n:"Grapes",p:"₹82/kg",c:"+5.1%",u:1},{n:"Coffee",p:"₹380/kg",c:"+8.4%",u:1},{n:"Tomato",p:"₹24/kg",c:"-8.5%",u:0},{n:"Coconut",p:"₹24/nut",c:"+1.1%",u:1},{n:"Maize",p:"₹22/kg",c:"+0.8%",u:1}];
-document.getElementById('tk').innerHTML=[...TK,...TK].map(t=>`<div class="ti"><span class="tn">${t.n}</span><span class="tp">${t.p}</span><span class="${t.u?'tu':'td'}">${t.c}</span></div>`).join('');
-function openForm(){document.getElementById('fmod').classList.add('open');updDist();}
-function closeForm(){document.getElementById('fmod').classList.remove('open');}
-let curSt=1;
-function goSt(n){document.getElementById('st'+curSt).classList.remove('on');document.getElementById('ps'+curSt).classList.remove('on');curSt=n;document.getElementById('st'+n).classList.add('on');for(let i=1;i<=n;i++)document.getElementById('ps'+i).classList.add('on');}
-function updDist(){const s=document.getElementById('sState').value;fd.state=s;const sel=document.getElementById('sDist');sel.innerHTML='';(DISTS[s]||['Other']).forEach(d=>{const o=document.createElement('option');o.value=d;o.textContent=d;sel.appendChild(o);});fd.dist=sel.value;autoSoil();}
-function autoSoil(){fd.dist=document.getElementById('sDist').value;const dd=getDist(fd.dist);const si=SI[dd.s]||SI['red-laterite'];const el=document.getElementById('sdb');el.style.display='flex';document.getElementById('sdt').textContent=si.n+' — Auto Detected';document.getElementById('sdi').textContent=dd.z+' zone · '+dd.r+'mm rain/yr · Best: '+si.best.slice(0,3).join(', ');}
-function selLT(el,v){document.querySelectorAll('.rc').forEach(r=>r.classList.remove('on'));el.classList.add('on');fd.lt=v;}
-function updB(v){fd.budget=parseInt(v);document.getElementById('bv').textContent='₹'+parseInt(v).toLocaleString('en-IN');}
-function updT(v){const m=parseInt(v);fd.time=m;document.getElementById('tv').textContent=m<12?m+' Months':m<24?'1 Year':Math.round(m/12)+' Years';}
-function setT(m,l){document.getElementById('tsl').value=m;document.getElementById('tv').textContent=l;fd.time=m;}
-function togCk(el,v){el.classList.toggle('on');el.querySelector('input').checked=el.classList.contains('on');fd.water=el.classList.contains('on')?[...fd.water.filter(w=>w!==v),v]:fd.water.filter(w=>w!==v);}
-function getDist(d){const k=d.toLowerCase();for(const j in DS)if(j.includes(k)||k.includes(j))return DS[j];return{s:'red-laterite',z:'semi-arid',r:800,la:15.0,ln:75.5};}
-function getAutoSoil(d){return getDist(d).s;}
-function calcROI(c,f){const a=f.land;const ti=(c.inv+(c.mo/12)*c.mnt)*a;const gr=c.rev*a;const np=gr-ti;const roi=Math.max(0,Math.round((np/ti)*100));return{ti,gr,np,roi,ann:Math.round(np/(c.mo/12)),ppa:np/a};}
-function score(c,f){let s=0;const soil=f.soil==='auto'?getAutoSoil(f.dist):f.soil;
-if(c.soils.includes(soil))s+=25;else if(c.soils.some(x=>x.includes(soil.split('-')[0])))s+=12;else s+=2;
-const gw=f.water.includes('borewell')||f.water.includes('canal')||f.water.includes('drip');
-if(c.lts.includes(f.lt))s+=22;else if(c.wn==='low'&&!gw)s+=15;else if(c.wn==='very-high'&&!gw)s+=2;else s+=8;
-const t=f.time;if(c.mo<=t&&c.mo>=t*.5)s+=22;else if(c.mo<=t)s+=16;else if(c.mo<=t*1.2)s+=10;else s+=2;
-const ti=c.inv+(c.mo/12)*c.mnt;if(f.budget>=ti)s+=16;else if(f.budget>=ti*.7)s+=10;else s+=3;
-const r=calcROI(c,f);s+=Math.min(15,r.roi/30);
-if(f.pri==='quick'&&c.mo<=6)s+=5;if(f.pri==='lowrisk'&&(c.risk==='very-low'||c.risk==='low'))s+=5;
-if(f.pri==='profit'&&r.ppa>200000)s+=5;if(f.pri==='stable'&&c.sch.some(x=>x.toLowerCase().includes('msp')||x.toLowerCase().includes('guaranteed')))s+=5;
-return{c,s:Math.min(100,Math.round(s)),r};}
-async function runAI(){closeForm();fd.dist=document.getElementById('sDist').value;const ls=document.getElementById('ls');ls.classList.add('on');
-const facts=["Mapping "+fd.dist+" to soil database...","Loading agricultural zone data...","Scoring 22 crops against your profile...","Calculating profit projections...","Fetching live weather...","Matching government schemes...","Building comparison charts...","Ranking final recommendations..."];
-let fi=0;const iv=setInterval(()=>{if(fi<facts.length){document.getElementById('lft').textContent=facts[fi];document.getElementById('lpf').style.width=Math.round((fi+1)/facts.length*90)+'%';fi++;}},600);
-await new Promise(r=>setTimeout(r,5200));clearInterval(iv);document.getElementById('lpf').style.width='100%';
-await new Promise(r=>setTimeout(r,300));ls.classList.remove('on');render();}
-function render(){const f=fd;const dd=getDist(f.dist);const soil=f.soil==='auto'?dd.s:f.soil;const si=SI[soil]||SI['red-laterite'];
-const scored=CROPS.map(c=>score(c,f)).sort((a,b)=>b.s-a.s);const top=scored[0];const oth=scored.slice(1,4);
-document.getElementById('results').style.display='block';setTimeout(obsAll,100);
-// Farmer bar
-const ts=f.time<12?f.time+' mo':Math.round(f.time/12)+' yr';
-document.getElementById('fbar').innerHTML=[{l:'District',v:f.dist},{l:'Land',v:f.land+' Acres'},{l:'Type',v:f.lt},{l:'Soil',v:si.n},{l:'Budget/Acre',v:'₹'+f.budget.toLocaleString('en-IN')},{l:'Time',v:ts},{l:'Priority',v:f.pri}].map(i=>`<div class="fbi"><div class="lbl">${i.l}</div><div class="val">${i.v}</div></div>`).join('');
-// Top crop
-document.getElementById('tcname').textContent=top.c.n;
-const roi=top.r;
-document.getElementById('trbg').style.backgroundImage=`url(${top.c.img})`;
-document.getElementById('trco').innerHTML=`<div class="rbadge">🏆 #1 Match — Score ${top.s}/100</div><h2>${top.c.ico} <span>${top.c.n}</span></h2><p class="trsub">${top.c.desc}</p><div class="ph"><div class="pit"><span class="am">₹${(roi.np/100000).toFixed(1)}L</span>Net Profit (${f.land} ac)</div><div class="pit"><span class="am">${top.c.mo<12?top.c.mo+' mo':Math.round(top.c.mo/12)+' yr'}</span>Harvest Time</div><div class="pit"><span class="am">${roi.roi}%</span>ROI</div><div class="pit"><span class="am">₹${(roi.ann/1000).toFixed(0)}K</span>Annual Profit</div></div>`;
-document.getElementById('scring').innerHTML=`<div class="sccirc"><div class="sn">${top.s}</div><div class="sl">Match Score</div></div><div style="font-size:.6rem;color:var(--muted);margin-top:7px">out of 100</div>`;
-// WHY section
-const icons={'₹':'💰','water':'💧','rain':'🌧️','price':'📈','export':'✈️','demand':'🔥','organic':'🌿','zero':'✅','govt':'🏛️','carbon':'🌍','ready':'⚡'};
-const wc=top.c.why.map(r=>{let ico='✅';const low=r.toLowerCase();for(const[k,v]of Object.entries(icons))if(low.includes(k)){ico=v;break;}const pts=r.split('—');return`<div class="wc"><div class="wico">${ico}</div><div class="wtit">${pts[0].trim()}</div><div class="wdsc">${pts[1]||''}</div></div>`;}).join('');
-document.getElementById('why').innerHTML=`<h3>🔍 Why ${top.c.n} Is #1 For Your Land</h3><div class="wgrid">${wc}</div><div style="margin-top:1.5rem;padding:1rem 1.2rem;background:rgba(200,149,26,.06);border:1px solid rgba(200,149,26,.2);border-radius:10px;display:flex;gap:2rem;flex-wrap:wrap;font-size:.84rem"><span>💸 Invest: <strong style="color:var(--gold)">₹${(roi.ti/100000).toFixed(1)}L</strong></span><span>📦 Revenue: <strong style="color:var(--gold)">₹${(roi.gr/100000).toFixed(1)}L</strong></span><span>✅ Net: <strong style="color:var(--gold)">₹${(roi.np/100000).toFixed(1)}L</strong></span><span>📈 ROI: <strong style="color:var(--gold)">${roi.roi}%</strong></span></div>`;
-// Other recs
-document.getElementById('rgrid').innerHTML=oth.map((r,i)=>{const ro=r.r;return`<div class="rcard reveal d${i+1}"><div class="rcimg"><img src="${r.c.img}" alt="${r.c.n}" loading="lazy"/><div class="rrnk">#${i+2} Choice</div></div><div class="rcbody"><div class="rcname">${r.c.ico} ${r.c.n}</div><div class="rcsub">Score: ${r.s}/100 · Risk: ${r.c.risk}</div><div class="rcstats"><div class="rcs"><div class="rsl">Net Profit</div><div class="rsv gd">₹${(ro.np/100000).toFixed(1)}L</div></div><div class="rcs"><div class="rsl">Harvest</div><div class="rsv">${r.c.mo<12?r.c.mo+' mo':Math.round(r.c.mo/12)+' yr'}</div></div><div class="rcs"><div class="rsl">ROI</div><div class="rsv">${ro.roi}%</div></div><div class="rcs"><div class="rsl">Invest/Ac</div><div class="rsv">₹${(r.c.inv/1000).toFixed(0)}K</div></div></div><div class="reas">${r.c.why.slice(0,3).map(w=>`<div class="rit"><div class="rdot"></div><span>${w}</span></div>`).join('')}</div></div></div>`;}).join('');
-// Charts
-const t6=scored.slice(0,6);
-setTimeout(()=>{
-if(window._pc)window._pc.destroy();
-window._pc=new Chart(document.getElementById('pc').getContext('2d'),{type:'bar',data:{labels:t6.map(r=>r.c.n),datasets:[{label:'Net Profit',data:t6.map(r=>r.r.np),backgroundColor:t6.map((_,i)=>i===0?'rgba(200,149,26,.9)':'rgba(255,255,255,.1)'),borderColor:t6.map((_,i)=>i===0?'#c8951a':'rgba(255,255,255,.2)'),borderWidth:1,borderRadius:8}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'₹'+c.raw.toLocaleString('en-IN')}}},scales:{y:{ticks:{callback:v=>'₹'+(v/100000).toFixed(0)+'L',color:'#a89070'},grid:{color:'rgba(255,255,255,.04)'},border:{display:false}},x:{ticks:{color:'#a89070',font:{size:10}},grid:{display:false},border:{display:false}}}}});
-if(window._rc)window._rc.destroy();
-window._rc=new Chart(document.getElementById('rc').getContext('2d'),{type:'bar',data:{labels:t6.map(r=>r.c.n),datasets:[{label:'ROI %',data:t6.map(r=>r.r.roi),backgroundColor:'rgba(200,149,26,.2)',borderColor:'#c8951a',borderWidth:2,borderRadius:6}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{callback:v=>v+'%',color:'#a89070'},grid:{color:'rgba(255,255,255,.04)'},border:{display:false}},y:{ticks:{color:'#a89070',font:{size:10}},grid:{display:false},border:{display:false}}}}});
-const rm={'very-low':1,'low':2,'medium':3,'high':4};
-if(window._rvc)window._rvc.destroy();
-window._rvc=new Chart(document.getElementById('rvc').getContext('2d'),{type:'bubble',data:{datasets:t6.map((r,i)=>({label:r.c.n,data:[{x:rm[r.c.risk]||3,y:r.r.roi,r:Math.max(8,Math.min(28,r.r.np/100000))}],backgroundColor:i===0?'rgba(200,149,26,.8)':'rgba(74,124,89,.6)',borderColor:i===0?'#c8951a':'#4a7c59',borderWidth:2}))},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:cx=>`${cx.dataset.label}: ROI ${cx.parsed.y}%`}}},scales:{x:{min:0,max:5,ticks:{callback:v=>['','Very Low','Low','Medium','High',''][v]||'',color:'#a89070'},title:{display:true,text:'Risk Level',color:'#a89070'}},y:{ticks:{callback:v=>v+'%',color:'#a89070'},title:{display:true,text:'ROI %',color:'#a89070'}}}}});
-},200);
-// Soil card
-document.getElementById('scont').innerHTML=`<div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem"><div style="width:42px;height:42px;border-radius:50%;background:${si.c};flex-shrink:0;border:2px solid var(--border)"></div><div><div style="font-size:.96rem;font-weight:600">${si.n}</div><div style="font-size:.7rem;color:var(--muted)">${dd.z} zone · ${dd.r}mm rain · ${f.dist}</div></div></div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1rem"><div class="sprop"><div class="spl">pH</div><div class="spv">${si.ph}</div></div><div class="sprop"><div class="spl">Nitrogen</div><div class="spv">${si.nit}</div></div><div class="sprop"><div class="spl">Moisture</div><div class="spv">${si.moi}</div></div></div><div style="font-size:.6rem;color:var(--muted);margin-bottom:6px;letter-spacing:1px;text-transform:uppercase">Best Crops for This Soil</div><div>${si.best.map(b=>`<span class="chip">🌿 ${b}</span>`).join('')}</div>`;
-// Schemes
-document.getElementById('schl').innerHTML=top.c.sch.concat(oth[0].c.sch.slice(0,2)).slice(0,6).map(s=>`<div class="sch"><h4>🏛️ ${s}</h4><p>Eligible in ${f.dist} · Apply at Raitha Samparka Kendra</p></div>`).join('');
-// Ranking table
-document.getElementById('rtbl').innerHTML=`<thead><tr><th>Rank</th><th>Crop</th><th>Score</th><th>Net Profit</th><th>ROI</th><th>Time</th><th>Risk</th></tr></thead><tbody>${scored.slice(0,12).map((r,i)=>`<tr><td><span class="rk rk${i<3?i+1:'x'}">${i+1}</span></td><td>${r.c.ico} ${r.c.n}</td><td style="color:var(--gold);font-weight:600">${r.s}/100</td><td style="color:${r.r.np>0?'#5cb85c':'#d9534f'}">₹${(r.r.np/100000).toFixed(1)}L</td><td>${r.r.roi}%</td><td>${r.c.mo<12?r.c.mo+' mo':Math.round(r.c.mo/12)+' yr'}</td><td><span style="font-size:.7rem;padding:2px 8px;border-radius:4px;background:${r.c.risk==='high'?'rgba(248,113,113,.1)':r.c.risk==='medium'?'rgba(251,191,36,.1)':'rgba(92,184,92,.1)'};color:${r.c.risk==='high'?'#f87171':r.c.risk==='medium'?'#fbbf24':'#5cb85c'}">${r.c.risk}</span></td></tr>`).join('')}</tbody>`;
-// Map
-setTimeout(()=>{if(window._map)window._map.remove();window._map=L.map('map').setView([dd.la,dd.ln],9);L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap'}).addTo(window._map);L.circleMarker([dd.la,dd.ln],{color:'#c8951a',fillColor:'#c8951a',fillOpacity:.85,radius:14,weight:2}).addTo(window._map).bindPopup(`<b style="color:#c8951a">${f.dist}</b><br>Soil: ${si.n}<br>Best: ${top.c.ico} ${top.c.n}<br>Score: ${top.s}/100`).openPopup();},400);
-// Weather
-fetchW(f.dist);
-// News
-const NEWS=[{tag:"Price Alert",h:`${top.c.n} prices at APMC Bengaluru hit 3-year high`,p:"Strong export and domestic demand pushes prices to seasonal peak.",img:top.c.img,d:"Today"},{tag:"Policy",h:"Karnataka Sandalwood Policy 2024: Farmers can sell directly at govt auctions",p:"Major reform allows private growers to sell without Forest Dept permit.",img:"https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=400&q=60",d:"2 days ago"},{tag:"Export",h:"Moringa leaf powder exports from Karnataka up 340% — USA driving demand",p:"Health supplement boom creates massive export opportunity for dryland farmers.",img:"https://images.unsplash.com/photo-1519624014191-508652836cd6?auto=format&fit=crop&w=400&q=60",d:"3 days ago"},{tag:"Scheme",h:"Dragon Fruit gets 50% NHB subsidy — apply before deadline",p:"National Horticulture Board extends subsidy deadline for dragon fruit projects.",img:"https://images.unsplash.com/photo-1526318472351-c6c55e77b28b?auto=format&fit=crop&w=400&q=60",d:"5 days ago"},{tag:"Millets",h:"₹2,000 Cr Millet Mission: Ragi farmers get free seed and training kits",p:"Karnataka distributes inputs to 5 lakh ragi farmers under Millets Mission.",img:"https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&w=400&q=60",d:"1 week ago"},{tag:"Climate",h:"IMD: 108% monsoon forecast for north Karnataka — cotton farmers advised to prep",p:"Above-normal rainfall gives cotton and sorghum farmers an advantage.",img:"https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=400&q=60",d:"1 week ago"},{tag:"Market",h:"Black Pepper breaks ₹800/kg — Kodagu growers celebrate",p:"Global shortage from Vietnam drives Indian pepper to multi-year price high.",img:"https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=400&q=60",d:"2 weeks ago"},{tag:"Tech",h:"Dragon Fruit LED lighting boosts yield 30% — 200 Karnataka farmers adopt",p:"Taiwan technique dramatically improves off-season dragon fruit yields.",img:"https://images.unsplash.com/photo-1526318472351-c6c55e77b28b?auto=format&fit=crop&w=400&q=60",d:"2 weeks ago"},{tag:"Carbon",h:"Sandalwood carbon credits: Karnataka farmers earn ₹12,000/acre/yr without cutting",p:"Voluntary carbon market lets sandalwood growers monetize trees without harvest.",img:"https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=400&q=60",d:"3 weeks ago"}];
-document.getElementById('ngrid').innerHTML=NEWS.map(n=>`<div class="nc reveal"><div class="ni"><img src="${n.img}" alt="${n.tag}" loading="lazy"/></div><div class="nb"><div class="ntag">${n.tag}</div><h4>${n.h}</h4><p>${n.p}</p><div class="ndt">🕐 ${n.d}</div></div></div>`).join('');
-setTimeout(obsAll,100);
-document.getElementById('results').scrollIntoView({behavior:'smooth'});}
-async function fetchW(dist){try{const r=await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(dist)},IN&appid=${AK}&units=metric`);if(!r.ok)throw 0;const d=await r.json();const ic={'Clear':'☀️','Clouds':'⛅','Rain':'🌧️','Drizzle':'🌦️','Thunderstorm':'⛈️','Mist':'🌫️'};document.getElementById('wc').innerHTML=`<div class="wbig"><div class="wico2">${ic[d.weather[0].main]||'🌡️'}</div><div class="wtemp">${Math.round(d.main.temp)}°C</div><div class="wcity">${d.name}, IN</div><div class="wdesc">${d.weather[0].description}</div><div class="wst"><div class="ws"><div class="wl">Humidity</div><div class="wv">${d.main.humidity}%</div></div><div class="ws"><div class="wl">Wind</div><div class="wv">${Math.round(d.wind.speed)}m/s</div></div><div class="ws"><div class="wl">Feels Like</div><div class="wv">${Math.round(d.main.feels_like)}°C</div></div></div></div>`;}catch(e){document.getElementById('wc').innerHTML='<div style="text-align:center;padding:2rem;color:var(--muted);font-size:.82rem">⏳ API activating — try again in a few mins</div>';}}
+
+// Form
+function openForm(){document.getElementById("fmod").classList.add("open");updDist();}
+function closeForm(){document.getElementById("fmod").classList.remove("open");}
+function goSt(n){
+  document.getElementById("st"+curSt).classList.remove("on");
+  document.getElementById("ps"+curSt).classList.remove("on");
+  curSt=n;
+  document.getElementById("st"+n).classList.add("on");
+  for(let i=1;i<=n;i++) document.getElementById("ps"+i).classList.add("on");
+}
+function updDist(){
+  const s=document.getElementById("sState").value; fd.state=s;
+  const sel=document.getElementById("sDist"); sel.innerHTML="";
+  (DISTS[s]||["Other"]).forEach(d=>{const o=document.createElement("option");o.value=d;o.textContent=d;sel.appendChild(o);});
+  fd.dist=sel.value; autoSoil();
+}
+function autoSoil(){
+  fd.dist=document.getElementById("sDist").value;
+  const dd=getDist(fd.dist); const si=SI[dd.s]||SI["red-laterite"];
+  const el=document.getElementById("sdb"); el.classList.add("show");
+  document.getElementById("sdt").textContent=si.n+" — Auto Detected";
+  document.getElementById("sdi").textContent=dd.z+" zone · "+dd.r+"mm rain/yr · Best: "+si.best.slice(0,3).join(", ");
+}
+function selLT(el,v){document.querySelectorAll(".rc").forEach(r=>r.classList.remove("on"));el.classList.add("on");fd.lt=v;}
+function updB(v){fd.budget=parseInt(v);document.getElementById("bv").textContent="₹"+parseInt(v).toLocaleString("en-IN");}
+function updT(v){const m=parseInt(v);fd.time=m;document.getElementById("tv").textContent=m<12?m+" Months":m<24?"1 Year":Math.round(m/12)+" Years";}
+function setT(m,l){document.getElementById("tsl").value=m;document.getElementById("tv").textContent=l;fd.time=m;}
+function togCk(el,v){
+  el.classList.toggle("on");
+  el.querySelector("input").checked=el.classList.contains("on");
+  fd.water=el.classList.contains("on")?[...fd.water.filter(w=>w!==v),v]:fd.water.filter(w=>w!==v);
+}
+function getDist(d){
+  const k=d.toLowerCase();
+  for(const j in DS) if(j.includes(k)||k.includes(j)) return DS[j];
+  return{s:"red-laterite",z:"semi-arid",r:800,la:15.0,ln:75.5};
+}
+function calcROI(c,f){
+  const a=f.land;
+  const ti=(c.inv+(c.mo/12)*c.mnt)*a;
+  const gr=c.rev*a;
+  const np=gr-ti;
+  const roi=Math.max(0,Math.round((np/ti)*100));
+  return{ti,gr,np,roi,ann:Math.round(np/(c.mo/12)),ppa:np/a};
+}
+function scoreC(c,f){
+  let s=0;
+  const soil=f.soil==="auto"?getDist(f.dist).s:f.soil;
+  if(c.soils.includes(soil)) s+=25;
+  else if(c.soils.some(x=>x.includes(soil.split("-")[0]))) s+=12;
+  else s+=2;
+  const gw=f.water.includes("borewell")||f.water.includes("canal")||f.water.includes("drip");
+  if(c.lts.includes(f.lt)) s+=22;
+  else if(c.wn==="low"&&!gw) s+=15;
+  else if(c.wn==="very-high"&&!gw) s+=2;
+  else s+=8;
+  const t=f.time;
+  if(c.mo<=t&&c.mo>=t*.5) s+=22;
+  else if(c.mo<=t) s+=16;
+  else if(c.mo<=t*1.2) s+=10;
+  else s+=2;
+  const ti=c.inv+(c.mo/12)*c.mnt;
+  if(f.budget>=ti) s+=16; else if(f.budget>=ti*.7) s+=10; else s+=3;
+  const r=calcROI(c,f);
+  s+=Math.min(15,r.roi/30);
+  if(f.pri==="quick"&&c.mo<=6) s+=5;
+  if(f.pri==="lowrisk"&&(c.risk==="very-low"||c.risk==="low")) s+=5;
+  if(f.pri==="profit"&&r.ppa>200000) s+=5;
+  if(f.pri==="stable"&&c.sch.some(x=>x.toLowerCase().includes("msp")||x.toLowerCase().includes("guaranteed"))) s+=5;
+  return{c,s:Math.min(100,Math.round(s)),r};
+}
+
+async function runAI(){
+  closeForm();
+  fd.dist=document.getElementById("sDist").value;
+  const ls=document.getElementById("ls");
+  ls.classList.add("on");
+  const facts=["Mapping "+fd.dist+" to soil database...","Loading agricultural zone data...","Scoring 22 crops against your profile...","Calculating profit projections...","Fetching live weather...","Matching government schemes...","Building comparison charts...","Ranking final recommendations..."];
+  let fi=0;
+  const iv=setInterval(()=>{
+    if(fi<facts.length){
+      document.getElementById("lft").textContent=facts[fi];
+      document.getElementById("lpf").style.width=Math.round((fi+1)/facts.length*90)+"%";
+      fi++;
+    }
+  },600);
+  await new Promise(r=>setTimeout(r,5200));
+  clearInterval(iv);
+  document.getElementById("lpf").style.width="100%";
+  await new Promise(r=>setTimeout(r,300));
+  ls.classList.remove("on");
+  render();
+}
+
+function render(){
+  const f=fd;
+  const dd=getDist(f.dist);
+  const soil=f.soil==="auto"?dd.s:f.soil;
+  const si=SI[soil]||SI["red-laterite"];
+  const scored=CROPS.map(c=>scoreC(c,f)).sort((a,b)=>b.s-a.s);
+  const top=scored[0]; const oth=scored.slice(1,4);
+  document.getElementById("results").style.display="block";
+  setTimeout(obsAll,100);
+  const ts=f.time<12?f.time+" mo":Math.round(f.time/12)+" yr";
+  document.getElementById("fbar").innerHTML=[{l:"District",v:f.dist},{l:"Land",v:f.land+" Acres"},{l:"Type",v:f.lt},{l:"Soil",v:si.n},{l:"Budget/Acre",v:"₹"+f.budget.toLocaleString("en-IN")},{l:"Time",v:ts},{l:"Priority",v:f.pri}].map(i=>"<div class=\"fbi\"><div class=\"lbl\">"+i.l+"</div><div class=\"val\">"+i.v+"</div></div>").join("");
+  document.getElementById("tcname").textContent=top.c.n;
+  const roi=top.r;
+  document.getElementById("trbg").style.backgroundImage="url("+top.c.img+")";
+  document.getElementById("trco").innerHTML="<div class=\"rbadge\">🏆 #1 Match — Score "+top.s+"/100</div><h2>"+top.c.ico+" <span>"+top.c.n+"</span></h2><p class=\"trsub\">"+top.c.desc+"</p><div class=\"ph\"><div class=\"pit\"><span class=\"am\">₹"+(roi.np/100000).toFixed(1)+"L</span>Net Profit ("+f.land+" ac)</div><div class=\"pit\"><span class=\"am\">"+(top.c.mo<12?top.c.mo+" mo":Math.round(top.c.mo/12)+" yr")+"</span>Harvest Time</div><div class=\"pit\"><span class=\"am\">"+roi.roi+"%</span>ROI</div><div class=\"pit\"><span class=\"am\">₹"+(roi.ann/1000).toFixed(0)+"K</span>Annual Profit</div></div>";
+  document.getElementById("scring").innerHTML="<div class=\"sccirc\"><div class=\"sn\">"+top.s+"</div><div class=\"sl\">Match Score</div></div><div style=\"font-size:.6rem;color:var(--muted);margin-top:7px\">out of 100</div>";
+  const icons={"₹":"💰","water":"💧","rain":"🌧️","price":"📈","export":"✈️","demand":"🔥","organic":"🌿","zero":"✅","govt":"🏛️","carbon":"🌍","ready":"⚡"};
+  const wcards=top.c.why.map(r=>{
+    let ico="✅";const low=r.toLowerCase();
+    for(const[k,v] of Object.entries(icons)) if(low.includes(k)){ico=v;break;}
+    const pts=r.split("—");
+    return "<div class=\"wcard\"><div class=\"wico2\">"+ico+"</div><div class=\"wtit\">"+pts[0].trim()+"</div><div class=\"wdsc\">"+(pts[1]||"")+"</div></div>";
+  }).join("");
+  document.getElementById("why").innerHTML="<h3>🔍 Why "+top.c.n+" Is #1 For Your Land</h3><div class=\"wgrid\">"+wcards+"</div><div style=\"margin-top:1.5rem;padding:1rem 1.2rem;background:rgba(200,149,26,.06);border:1px solid rgba(200,149,26,.2);border-radius:10px;display:flex;gap:2rem;flex-wrap:wrap;font-size:.84rem\"><span>💸 Invest: <strong style=\"color:var(--gold)\">₹"+(roi.ti/100000).toFixed(1)+"L</strong></span><span>📦 Revenue: <strong style=\"color:var(--gold)\">₹"+(roi.gr/100000).toFixed(1)+"L</strong></span><span>✅ Net: <strong style=\"color:var(--gold)\">₹"+(roi.np/100000).toFixed(1)+"L</strong></span><span>📈 ROI: <strong style=\"color:var(--gold)\">"+roi.roi+"%</strong></span></div>";
+  document.getElementById("rgrid").innerHTML=oth.map((r,i)=>{
+    const ro=r.r;
+    return "<div class=\"rcard reveal d"+(i+1)+"\"><div class=\"rcimg\"><img src=\""+r.c.img+"\" alt=\""+r.c.n+"\" loading=\"lazy\" onerror=\"this.src=\'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=400&q=60\'\"/><div class=\"rrnk\">#"+(i+2)+" Choice</div></div><div class=\"rcbody\"><div class=\"rcname\">"+r.c.ico+" "+r.c.n+"</div><div class=\"rcsub\">Score: "+r.s+"/100 · Risk: "+r.c.risk+"</div><div class=\"rcstats\"><div class=\"rcs\"><div class=\"rsl\">Net Profit</div><div class=\"rsv\">₹"+(ro.np/100000).toFixed(1)+"L</div></div><div class=\"rcs\"><div class=\"rsl\">Harvest</div><div class=\"rsv\">"+(r.c.mo<12?r.c.mo+" mo":Math.round(r.c.mo/12)+" yr")+"</div></div><div class=\"rcs\"><div class=\"rsl\">ROI</div><div class=\"rsv\">"+ro.roi+"%</div></div><div class=\"rcs\"><div class=\"rsl\">Invest/Ac</div><div class=\"rsv\">₹"+(r.c.inv/1000).toFixed(0)+"K</div></div></div><div class=\"reas\">"+r.c.why.slice(0,3).map(w=>"<div class=\"rit\"><div class=\"rdot\"></div><span>"+w+"</span></div>").join("")+"</div></div></div>";
+  }).join("");
+  // Charts
+  const t6=scored.slice(0,6);
+  setTimeout(()=>{
+    if(window._pc) window._pc.destroy();
+    window._pc=new Chart(document.getElementById("pc").getContext("2d"),{type:"bar",data:{labels:t6.map(r=>r.c.n),datasets:[{label:"Net Profit",data:t6.map(r=>r.r.np),backgroundColor:t6.map((_,i)=>i===0?"rgba(200,149,26,.9)":"rgba(255,255,255,.1)"),borderColor:t6.map((_,i)=>i===0?"#c8951a":"rgba(255,255,255,.2)"),borderWidth:1,borderRadius:8}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>"₹"+c.raw.toLocaleString("en-IN")}}},scales:{y:{ticks:{callback:v=>"₹"+(v/100000).toFixed(0)+"L",color:"#a89070"},grid:{color:"rgba(255,255,255,.04)"},border:{display:false}},x:{ticks:{color:"#a89070",font:{size:10}},grid:{display:false},border:{display:false}}}}});
+    if(window._rc2) window._rc2.destroy();
+    window._rc2=new Chart(document.getElementById("rchart").getContext("2d"),{type:"bar",data:{labels:t6.map(r=>r.c.n),datasets:[{label:"ROI %",data:t6.map(r=>r.r.roi),backgroundColor:"rgba(200,149,26,.2)",borderColor:"#c8951a",borderWidth:2,borderRadius:6}]},options:{indexAxis:"y",responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{callback:v=>v+"%",color:"#a89070"},grid:{color:"rgba(255,255,255,.04)"},border:{display:false}},y:{ticks:{color:"#a89070",font:{size:10}},grid:{display:false},border:{display:false}}}}});
+    const rm={"very-low":1,"low":2,"medium":3,"high":4};
+    if(window._rvc2) window._rvc2.destroy();
+    window._rvc2=new Chart(document.getElementById("rvchart").getContext("2d"),{type:"bubble",data:{datasets:t6.map((r,i)=>({label:r.c.n,data:[{x:rm[r.c.risk]||3,y:r.r.roi,r:Math.max(8,Math.min(28,r.r.np/100000))}],backgroundColor:i===0?"rgba(200,149,26,.8)":"rgba(74,124,89,.6)",borderColor:i===0?"#c8951a":"#4a7c59",borderWidth:2}))},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:cx=>cx.dataset.label+": ROI "+cx.parsed.y+"%"}}},scales:{x:{min:0,max:5,ticks:{callback:v=>["","Very Low","Low","Medium","High",""][v]||"",color:"#a89070"},title:{display:true,text:"Risk Level",color:"#a89070"}},y:{ticks:{callback:v=>v+"%",color:"#a89070"},title:{display:true,text:"ROI %",color:"#a89070"}}}}});
+  },200);
+  // Soil
+  document.getElementById("scont").innerHTML="<div style=\"display:flex;align-items:center;gap:12px;margin-bottom:1rem\"><div style=\"width:42px;height:42px;border-radius:50%;background:"+si.c+";flex-shrink:0;border:2px solid var(--border)\"></div><div><div style=\"font-size:.96rem;font-weight:600\">"+si.n+"</div><div style=\"font-size:.7rem;color:var(--muted)\">"+dd.z+" zone · "+dd.r+"mm rain · "+f.dist+"</div></div></div><div style=\"display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1rem\"><div class=\"sprop\"><div class=\"spl\">pH</div><div class=\"spv\">"+si.ph+"</div></div><div class=\"sprop\"><div class=\"spl\">Nitrogen</div><div class=\"spv\">"+si.nit+"</div></div><div class=\"sprop\"><div class=\"spl\">Moisture</div><div class=\"spv\">"+si.moi+"</div></div></div><div style=\"font-size:.6rem;color:var(--muted);margin-bottom:6px;letter-spacing:1px;text-transform:uppercase\">Best Crops for This Soil</div><div>"+si.best.map(b=>"<span class=\"chip\">🌿 "+b+"</span>").join("")+"</div>";
+  // Schemes
+  document.getElementById("schl").innerHTML=top.c.sch.concat(oth[0].c.sch.slice(0,2)).slice(0,6).map(s=>"<div class=\"gsch\"><h4>🏛️ "+s+"</h4><p>Eligible in "+f.dist+" · Apply at Raitha Samparka Kendra</p></div>").join("");
+  // Table
+  document.getElementById("rtbl").innerHTML="<thead><tr><th>Rank</th><th>Crop</th><th>Score</th><th>Net Profit</th><th>ROI</th><th>Time</th><th>Risk</th></tr></thead><tbody>"+scored.slice(0,12).map((r,i)=>"<tr><td><span class=\"rk rk"+(i<3?i+1:"x")+"\">"+( i+1)+"</span></td><td>"+r.c.ico+" "+r.c.n+"</td><td style=\"color:var(--gold);font-weight:600\">"+r.s+"/100</td><td style=\"color:"+(r.r.np>0?"#5cb85c":"#d9534f")+"\">₹"+(r.r.np/100000).toFixed(1)+"L</td><td>"+r.r.roi+"%</td><td>"+(r.c.mo<12?r.c.mo+" mo":Math.round(r.c.mo/12)+" yr")+"</td><td><span style=\"font-size:.7rem;padding:2px 8px;border-radius:4px;background:"+(r.c.risk==="high"?"rgba(248,113,113,.1)":r.c.risk==="medium"?"rgba(251,191,36,.1)":"rgba(92,184,92,.1)")+";color:"+(r.c.risk==="high"?"#f87171":r.c.risk==="medium"?"#fbbf24":"#5cb85c")+"\">" +r.c.risk+"</span></td></tr>").join("")+"</tbody>";
+  // Map
+  setTimeout(()=>{
+    if(window._map) window._map.remove();
+    window._map=L.map("map").setView([dd.la,dd.ln],9);
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{attribution:"© OpenStreetMap"}).addTo(window._map);
+    L.circleMarker([dd.la,dd.ln],{color:"#c8951a",fillColor:"#c8951a",fillOpacity:.85,radius:14,weight:2}).addTo(window._map).bindPopup("<b style=\"color:#c8951a\">"+f.dist+"</b><br>Soil: "+si.n+"<br>Best: "+top.c.ico+" "+top.c.n+"<br>Score: "+top.s+"/100").openPopup();
+  },400);
+  // Weather
+  fetchW(f.dist);
+  // News
+  const fb="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=400&q=60";
+  const NEWS=[
+    {tag:"Price Alert",h:top.c.n+" prices at APMC Bengaluru hit 3-year high",p:"Strong export and domestic demand pushes prices to seasonal peak across Karnataka.",img:top.c.img,d:"Today"},
+    {tag:"Policy",h:"Karnataka Sandalwood 2024: Farmers can sell directly at govt auctions",p:"Major reform allows private growers to sell without Forest Dept permit.",img:"https://images.unsplash.com/photo-1448375240586-882707db888b?w=400&q=60",d:"2 days ago"},
+    {tag:"Export",h:"Moringa leaf powder exports up 340% — USA driving Karnataka demand",p:"Health supplement boom creates massive export opportunity for dryland farmers.",img:"https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&q=60",d:"3 days ago"},
+    {tag:"Scheme",h:"Dragon Fruit gets 50% NHB subsidy — apply before deadline",p:"National Horticulture Board extends capital subsidy for dragon fruit projects.",img:"https://images.unsplash.com/photo-1526318472351-c6c55e77b28b?w=400&q=60",d:"5 days ago"},
+    {tag:"Millets Mission",h:"₹2,000 Cr Millet Mission: Ragi farmers get free seeds and training",p:"Karnataka distributes inputs to 5 lakh ragi farmers under Millets Mission 2023.",img:"https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=400&q=60",d:"1 week ago"},
+    {tag:"Climate",h:"IMD: 108% monsoon forecast for north Karnataka — cotton farmers advised",p:"Above-normal rainfall gives cotton and sorghum farmers advantage this Kharif.",img:fb,d:"1 week ago"},
+    {tag:"Market",h:"Black Pepper breaks ₹800/kg — Kodagu growers celebrate",p:"Global supply shortage from Vietnam drives Indian pepper to multi-year high.",img:"https://images.unsplash.com/photo-1599420186946-7b6fb4e297f0?w=400&q=60",d:"2 weeks ago"},
+    {tag:"Technology",h:"Dragon Fruit LED night lighting adopted by 200 Karnataka farmers",p:"Taiwan technique improves off-season dragon fruit yields by 30%.",img:"https://images.unsplash.com/photo-1526318472351-c6c55e77b28b?w=400&q=60",d:"2 weeks ago"},
+    {tag:"Carbon Credits",h:"Sandalwood carbon credits: Karnataka farmers earn ₹12,000/acre/yr",p:"Voluntary carbon market lets sandalwood growers monetize trees without cutting.",img:"https://images.unsplash.com/photo-1448375240586-882707db888b?w=400&q=60",d:"3 weeks ago"}
+  ];
+  document.getElementById("ngrid").innerHTML=NEWS.map(n=>"<div class=\"nc reveal\"><div class=\"ni\"><img src=\""+n.img+"\" alt=\""+n.tag+"\" loading=\"lazy\" onerror=\"this.src=\'"+fb+"\'\" /></div><div class=\"nb\"><div class=\"ntag\">"+n.tag+"</div><h4>"+n.h+"</h4><p>"+n.p+"</p><div class=\"ndt\">🕐 "+n.d+"</div></div></div>").join("");
+  setTimeout(obsAll,150);
+  document.getElementById("results").scrollIntoView({behavior:"smooth"});
+}
+
+async function fetchW(dist){
+  try{
+    const r=await fetch("https://api.openweathermap.org/data/2.5/weather?q="+encodeURIComponent(dist)+",IN&appid="+AK+"&units=metric");
+    if(!r.ok) throw 0;
+    const d=await r.json();
+    const ic={"Clear":"☀️","Clouds":"⛅","Rain":"🌧️","Drizzle":"🌦️","Thunderstorm":"⛈️","Mist":"🌫️"};
+    document.getElementById("wc").innerHTML="<div class=\"wbig\"><div class=\"wemoji\">"+(ic[d.weather[0].main]||"🌡️")+"</div><div class=\"wtemp\">"+Math.round(d.main.temp)+"°C</div><div class=\"wcity\">"+d.name+", IN</div><div class=\"wdesc2\">"+d.weather[0].description+"</div><div class=\"wst\"><div class=\"ws\"><div class=\"wl\">Humidity</div><div class=\"wv\">"+d.main.humidity+"%</div></div><div class=\"ws\"><div class=\"wl\">Wind</div><div class=\"wv\">"+Math.round(d.wind.speed)+"m/s</div></div><div class=\"ws\"><div class=\"wl\">Feels Like</div><div class=\"wv\">"+Math.round(d.main.feels_like)+"°C</div></div></div></div>";
+  } catch(e){
+    document.getElementById("wc").innerHTML="<div style=\"text-align:center;padding:2rem;color:var(--muted);font-size:.82rem\">⏳ Weather API activating — try again in a few mins</div>";
+  }
+}
+
 updDist();
 </script>
 </body>
