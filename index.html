@@ -247,20 +247,6 @@ footer{background:#080600;border-top:1px solid var(--border);padding:4rem 2rem 2
 .fbot{max-width:1100px;margin:0 auto;border-top:1px solid var(--border);padding-top:1.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
 .fbot p{font-size:.72rem;color:var(--muted);}
 
-.scan-box{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:2rem;max-width:780px;}
-.scan-up{border:2px dashed var(--border);border-radius:14px;padding:3rem 2rem;text-align:center;cursor:pointer;transition:all .3s;}
-.scan-up:hover{border-color:var(--gold);background:rgba(200,149,26,.04);}
-.sspin{width:54px;height:54px;border-radius:50%;border:3px solid rgba(255,255,255,.08);border-top-color:var(--gold);animation:spin 1s linear infinite;margin:0 auto 1rem;}
-.src2{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:16px;padding:1.4rem;margin-bottom:1rem;}
-.sstag{display:inline-block;padding:4px 13px;border-radius:4px;font-size:.62rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:.8rem;}
-.ss-ok{background:rgba(92,184,92,.15);color:#5cb85c;border:1px solid rgba(92,184,92,.3);}
-.ss-wn{background:rgba(251,191,36,.15);color:#fbbf24;border:1px solid rgba(251,191,36,.3);}
-.ss-cr{background:rgba(248,113,113,.15);color:#f87171;border:1px solid rgba(248,113,113,.3);}
-.aii{display:flex;gap:11px;align-items:flex-start;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);}
-.aii:last-child{border-bottom:none;}
-.ain{width:25px;height:25px;border-radius:50%;background:var(--gold);color:var(--soil);font-size:.68rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
-.ait{font-size:.81rem;line-height:1.65;color:var(--text);}
-.ail{font-size:.59rem;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px;}
 #gcb{position:fixed;bottom:1.8rem;right:1.8rem;background:var(--gold);color:var(--soil);border:none;border-radius:30px;padding:12px 20px;font-size:.8rem;font-weight:700;cursor:pointer;z-index:9999;box-shadow:0 4px 22px rgba(200,149,26,.6);font-family:inherit;letter-spacing:1px;}
 #gcbox{position:fixed;bottom:5.5rem;right:1.8rem;width:355px;height:500px;background:linear-gradient(135deg,#1a1000,#0a150b);border:1px solid var(--border);border-radius:18px;z-index:9998;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.8);overflow:hidden;display:none;}
 #gchdr{background:linear-gradient(135deg,#1c3a1e,#0a2010);padding:.9rem 1.1rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);}
@@ -289,7 +275,7 @@ footer{background:#080600;border-top:1px solid var(--border);padding:4rem 2rem 2
   </a>
   <nav>
     <a href="#how">How It Works</a>
-    <a href="#gallery">Crops</a><a href="#scanner">Farm Scan</a>
+    <a href="#gallery">Crops</a>
     <a href="#results">My Report</a>
   </nav>
   <div class="hnav">
@@ -531,27 +517,6 @@ footer{background:#080600;border-top:1px solid var(--border);padding:4rem 2rem 2
   </div>
 </section>
 
-<section id="scanner" style="padding:5.5rem 2rem;background:linear-gradient(to bottom,#0e1a0f,var(--soil));">
-<div class="sw">
-<div class="ey reveal">AI Vision</div>
-<div class="stit reveal d1">Scan Your Farm.<br><em>Get Expert Advice.</em></div>
-<p class="reveal d2" style="color:var(--muted);font-size:.88rem;max-width:500px;line-height:1.8;margin-bottom:2.5rem">Upload a photo of your crops or soil. AI detects disease, pests and fertilizer needs instantly.</p>
-<div class="scan-box reveal d2">
-  <div class="scan-up" id="gsup" onclick="document.getElementById('gsfin').click()">
-    <div style="font-size:2.8rem;margin-bottom:.8rem">📸</div>
-    <div style="font-size:1rem;font-weight:600;color:var(--cream);margin-bottom:.3rem">Tap to Upload Farm Photo</div>
-    <div style="font-size:.74rem;color:var(--muted)">JPG, PNG, WEBP supported</div>
-  </div>
-  <input type="file" id="gsfin" accept="image/*" style="display:none" onchange="gsFn(this)"/>
-  <div id="gspv" style="display:none">
-    <img id="gsim" style="width:100%;max-height:300px;object-fit:cover;border-radius:12px;border:1px solid rgba(200,149,26,.3);margin-bottom:1rem"/>
-    <button id="gsabtn" onclick="gsAnalyze()" style="width:100%;padding:13px;font-size:.9rem;background:var(--gold);color:var(--soil);border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:inherit;">🔬 Analyze My Farm</button>
-    <button onclick="gsReset()" style="width:100%;margin-top:.5rem;background:transparent;border:1px solid rgba(200,149,26,.3);color:var(--muted);padding:9px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:.76rem;">Upload Different Photo</button>
-  </div>
-</div>
-<div id="gsres" style="display:none;margin-top:1.8rem;max-width:780px"></div>
-</div>
-</section>
 <button id="gcb" onclick="gcToggle()">💬 Ask AI</button>
 <div id="gcbox">
   <div id="gchdr">
@@ -562,7 +527,7 @@ footer{background:#080600;border-top:1px solid var(--border);padding:4rem 2rem 2
     </div>
     <button onclick="gcToggle()" style="background:rgba(255,255,255,.1);border:none;color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:.9rem;">✕</button>
   </div>
-  <div id="gcmsgs"><div class="gcm gcmb">👋 Hi! I am your Gro.ai Agronomist. Ask me anything about crops, diseases, fertilizers or govt schemes in English or Hindi!</div></div>
+  <div id="gcmsgs"><div class="gcm gcmb">👋 Hi! I am your Gro.ai Agronomist. Ask me anything about crops, diseases, fertilizers or govt schemes!</div></div>
   <div id="gcirow">
     <input id="gcinp" type="text" placeholder="Ask your farming question..." onkeydown="if(event.key==='Enter')gcSend()"/>
     <button id="gcsnd" onclick="gcSend()">➤</button>
@@ -917,80 +882,7 @@ updDist();
 <script>
 var _gK = "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";
 var _gChat = "https://api.groq.com/openai/v1/chat/completions";
-var _gB = null, _gM = "image/jpeg";
 var _gcO = false, _gcH = [];
-
-function gsFn(inp) {
-  var file = inp.files[0];
-  if (!file) return;
-  _gM = file.type || "image/jpeg";
-  var r = new FileReader();
-  r.onload = function(e) {
-    document.getElementById("gsim").src = e.target.result;
-    document.getElementById("gspv").style.display = "block";
-    document.getElementById("gsup").style.display = "none";
-    _gB = e.target.result;
-  };
-  r.readAsDataURL(file);
-}
-
-function gsReset() {
-  document.getElementById("gspv").style.display = "none";
-  document.getElementById("gsres").style.display = "none";
-  document.getElementById("gsup").style.display = "block";
-  document.getElementById("gsfin").value = "";
-  _gB = null;
-}
-
-function gsAnalyze() {
-  if (!_gB) { alert("Please upload a photo first!"); return; }
-  var btn = document.getElementById("gsabtn");
-  var res = document.getElementById("gsres");
-  btn.disabled = true;
-  btn.textContent = "Analyzing...";
-  res.style.display = "block";
-  res.innerHTML = '<div style="text-align:center;padding:2.5rem"><div class="sspin"></div><div style="color:#c8951a;font-size:1.1rem;font-weight:600;margin-top:.8rem">AI Agronomist Analyzing...</div><div style="color:#a89070;font-size:.76rem;margin-top:.3rem">Checking crop health, soil and water stress...</div></div>';
-  var prompt = 'You are an expert Indian agronomist. Analyze this farm or crop image. Respond ONLY with valid JSON no extra text: {"overall":"Good","summary":"2 sentence assessment","issues":[{"title":"issue","severity":"High","detail":"explanation"}],"actions":[{"step":"action","product":"Indian product name","timing":"when"}],"positive":"what looks healthy","nextcheck":"timeframe"}';
-  fetch(_gChat, {
-    method: "POST",
-    headers: {"Content-Type":"application/json","Authorization":"Bearer "+_gK},
-    body: JSON.stringify({
-      model: "llama-3.2-90b-vision-preview",
-      messages: [{role:"user",content:[{type:"text",text:prompt},{type:"image_url",image_url:{url:_gB}}]}],
-      temperature: 0.1, max_tokens: 600
-    })
-  })
-  .then(function(r){return r.json();})
-  .then(function(d){
-    if(d.error){gsErr(d.error.message);return;}
-    var raw = d.choices&&d.choices[0] ? d.choices[0].message.content : "";
-    raw = raw.replace(/```json/g,"").replace(/```/g,"").trim();
-    var s=raw.indexOf("{"),e=raw.lastIndexOf("}");
-    if(s!==-1&&e!==-1) raw=raw.slice(s,e+1);
-    var p; try{p=JSON.parse(raw);}catch(x){p=null;}
-    if(p){
-      var sc=p.overall==="Good"?"ss-ok":p.overall==="Critical"?"ss-cr":"ss-wn";
-      var ih=(p.issues||[]).map(function(x){
-        var col=x.severity==="High"?"#f87171":x.severity==="Medium"?"#fbbf24":"#5cb85c";
-        return '<div class="aii"><div class="ain" style="background:'+col+';color:#000">'+x.severity[0]+'</div><div class="ait"><div class="ail">'+x.severity+' Priority</div><strong>'+x.title+'</strong><br>'+x.detail+'</div></div>';
-      }).join("");
-      var ah=(p.actions||[]).map(function(a,i){
-        return '<div class="aii"><div class="ain">'+(i+1)+'</div><div class="ait"><strong>'+a.step+'</strong>'+(a.product?'<br><span style="color:#c8951a;font-size:.74rem">Product: '+a.product+'</span>':'')+(a.timing?'<br><span style="color:#a89070;font-size:.71rem">When: '+a.timing+'</span>':'')+'</div></div>';
-      }).join("");
-      res.innerHTML='<div class="src2"><span class="sstag '+sc+'">Farm Status: '+p.overall+'</span><p style="font-size:.84rem;line-height:1.7;margin-top:.5rem">'+p.summary+'</p>'+(p.positive?'<div style="background:rgba(92,184,92,.08);border:1px solid rgba(92,184,92,.2);border-radius:9px;padding:.7rem;font-size:.78rem;color:#5cb85c;margin-top:.7rem">Good: '+p.positive+'</div>':'')+'</div>'+(ih?'<div class="src2"><div class="ctit">Issues Found</div>'+ih+'</div>':'')+'<div class="src2"><div class="ctit">Action Plan</div>'+ah+'</div><div style="background:rgba(200,149,26,.06);border:1px solid rgba(200,149,26,.2);border-radius:9px;padding:.8rem;font-size:.76rem;color:#a89070">Next Check: '+(p.nextcheck||"Monitor weekly")+'</div>';
-    } else {
-      res.innerHTML='<div class="src2"><div class="ctit">AI Analysis</div><p style="font-size:.83rem;line-height:1.7">'+raw+'</p></div>';
-    }
-    btn.disabled=false; btn.textContent="Analyze My Farm";
-  })
-  .catch(function(e){gsErr("Network: "+e.message);});
-}
-
-function gsErr(msg){
-  document.getElementById("gsres").innerHTML='<div class="src2" style="border-color:rgba(248,113,113,.3)"><p style="color:#f87171">Error: '+msg+'</p></div>';
-  document.getElementById("gsabtn").disabled=false;
-  document.getElementById("gsabtn").textContent="Analyze My Farm";
-}
 
 function gcToggle(){
   _gcO=!_gcO;
@@ -1040,6 +932,5 @@ function gcSend(){
     inp.disabled=false; document.getElementById("gcsnd").disabled=false;
   });
 }
-
 </script>
 </html>
