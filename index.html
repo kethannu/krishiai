@@ -558,7 +558,7 @@ footer{background:#080600;border-top:1px solid var(--border);padding:4rem 2rem 2
     <div style="display:flex;align-items:center;gap:9px">
       <div style="font-size:1.4rem">🌿</div>
       <div><div style="font-weight:700;font-size:.9rem;color:#fff">Gro.ai Agronomist</div>
-      <div style="font-size:.62rem;color:rgba(255,255,255,.5)">Ask anything about farming</div></div>
+      <div style="font-size:.62rem;color:rgba(255,255,255,.5)">Powered by Llama 3</div></div>
     </div>
     <button onclick="gcToggle()" style="background:rgba(255,255,255,.1);border:none;color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:.9rem;">✕</button>
   </div>
@@ -915,8 +915,8 @@ updDist();
 </script>
 </body>
 <script>
-var _gK = "AIzaSyDW3ok641z2saKiFFUoxCb4Mh8b15zdT3w";
-var _gU = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + _gK;
+var _gK = "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";
+var _gChat = "https://api.groq.com/openai/v1/chat/completions";
 var _gB = null, _gM = "image/jpeg";
 var _gcO = false, _gcH = [];
 
@@ -929,7 +929,7 @@ function gsFn(inp) {
     document.getElementById("gsim").src = e.target.result;
     document.getElementById("gspv").style.display = "block";
     document.getElementById("gsup").style.display = "none";
-    _gB = e.target.result.split(",")[1];
+    _gB = e.target.result;
   };
   r.readAsDataURL(file);
 }
@@ -949,122 +949,95 @@ function gsAnalyze() {
   btn.disabled = true;
   btn.textContent = "Analyzing...";
   res.style.display = "block";
-  res.innerHTML = '<div style="text-align:center;padding:2.5rem"><div class="sspin"></div><div style="color:#c8951a;font-size:1.1rem;font-weight:600;margin-top:.8rem">AI Analyzing your farm...</div></div>';
-  var prompt = 'You are an expert Indian agronomist. Analyze this farm image carefully. Reply ONLY with valid JSON, no other text before or after: {"overall":"Good","summary":"2 sentence assessment","issues":[{"title":"issue name","severity":"High","detail":"explanation"}],"actions":[{"step":"action to take","product":"product name if needed","timing":"when"}],"positive":"what looks healthy","nextcheck":"timeframe"}';
-  fetch(_gU, {
+  res.innerHTML = '<div style="text-align:center;padding:2.5rem"><div class="sspin"></div><div style="color:#c8951a;font-size:1.1rem;font-weight:600;margin-top:.8rem">AI Agronomist Analyzing...</div><div style="color:#a89070;font-size:.76rem;margin-top:.3rem">Checking crop health, soil and water stress...</div></div>';
+  var prompt = 'You are an expert Indian agronomist. Analyze this farm or crop image. Respond ONLY with valid JSON no extra text: {"overall":"Good","summary":"2 sentence assessment","issues":[{"title":"issue","severity":"High","detail":"explanation"}],"actions":[{"step":"action","product":"Indian product name","timing":"when"}],"positive":"what looks healthy","nextcheck":"timeframe"}';
+  fetch(_gChat, {
     method: "POST",
-    headers: {"Content-Type": "application/json"},
+    headers: {"Content-Type":"application/json","Authorization":"Bearer "+_gK},
     body: JSON.stringify({
-      contents: [{parts: [{text: prompt}, {inline_data: {mime_type: _gM, data: _gB}}]}],
-      generationConfig: {temperature: 0.1}
+      model: "llama-3.2-90b-vision-preview",
+      messages: [{role:"user",content:[{type:"text",text:prompt},{type:"image_url",image_url:{url:_gB}}]}],
+      temperature: 0.1, max_tokens: 600
     })
   })
-  .then(function(r) { return r.json(); })
-  .then(function(d) {
-    if (d.error) { gsErr(d.error.message); return; }
-    if (!d.candidates || !d.candidates[0]) { gsErr("No AI response received"); return; }
-    var raw = d.candidates[0].content.parts[0].text;
+  .then(function(r){return r.json();})
+  .then(function(d){
+    if(d.error){gsErr(d.error.message);return;}
+    var raw = d.choices&&d.choices[0] ? d.choices[0].message.content : "";
     raw = raw.replace(/```json/g,"").replace(/```/g,"").trim();
-    var s = raw.indexOf("{"), e = raw.lastIndexOf("}");
-    if (s !== -1 && e !== -1) raw = raw.slice(s, e + 1);
-    var p;
-    try { p = JSON.parse(raw); } catch(x) { p = null; }
-    if (p) {
-      var sc = p.overall === "Good" ? "ss-ok" : p.overall === "Critical" ? "ss-cr" : "ss-wn";
-      var ih = (p.issues||[]).map(function(x) {
-        var col = x.severity==="High" ? "#f87171" : x.severity==="Medium" ? "#fbbf24" : "#5cb85c";
+    var s=raw.indexOf("{"),e=raw.lastIndexOf("}");
+    if(s!==-1&&e!==-1) raw=raw.slice(s,e+1);
+    var p; try{p=JSON.parse(raw);}catch(x){p=null;}
+    if(p){
+      var sc=p.overall==="Good"?"ss-ok":p.overall==="Critical"?"ss-cr":"ss-wn";
+      var ih=(p.issues||[]).map(function(x){
+        var col=x.severity==="High"?"#f87171":x.severity==="Medium"?"#fbbf24":"#5cb85c";
         return '<div class="aii"><div class="ain" style="background:'+col+';color:#000">'+x.severity[0]+'</div><div class="ait"><div class="ail">'+x.severity+' Priority</div><strong>'+x.title+'</strong><br>'+x.detail+'</div></div>';
       }).join("");
-      var ah = (p.actions||[]).map(function(a, i) {
-        return '<div class="aii"><div class="ain">'+(i+1)+'</div><div class="ait"><strong>'+a.step+'</strong>'+(a.product ? '<br><span style="color:#c8951a;font-size:.74rem">Product: '+a.product+'</span>' : '')+(a.timing ? '<br><span style="color:#a89070;font-size:.71rem">When: '+a.timing+'</span>' : '')+'</div></div>';
+      var ah=(p.actions||[]).map(function(a,i){
+        return '<div class="aii"><div class="ain">'+(i+1)+'</div><div class="ait"><strong>'+a.step+'</strong>'+(a.product?'<br><span style="color:#c8951a;font-size:.74rem">Product: '+a.product+'</span>':'')+(a.timing?'<br><span style="color:#a89070;font-size:.71rem">When: '+a.timing+'</span>':'')+'</div></div>';
       }).join("");
-      res.innerHTML =
-        '<div class="src2"><span class="sstag '+sc+'">Farm Status: '+p.overall+'</span><p style="font-size:.84rem;line-height:1.7;margin-top:.5rem">'+p.summary+'</p>'+(p.positive ? '<div style="background:rgba(92,184,92,.08);border:1px solid rgba(92,184,92,.2);border-radius:9px;padding:.7rem;font-size:.78rem;color:#5cb85c;margin-top:.7rem">Good: '+p.positive+'</div>' : '')+'</div>'+
-        (ih ? '<div class="src2"><div class="ctit">Issues Found</div>'+ih+'</div>' : '')+
-        '<div class="src2"><div class="ctit">Action Plan</div>'+ah+'</div>'+
-        '<div style="background:rgba(200,149,26,.06);border:1px solid rgba(200,149,26,.2);border-radius:9px;padding:.8rem;font-size:.76rem;color:#a89070">Next Check: '+(p.nextcheck||"Monitor weekly")+'</div>';
+      res.innerHTML='<div class="src2"><span class="sstag '+sc+'">Farm Status: '+p.overall+'</span><p style="font-size:.84rem;line-height:1.7;margin-top:.5rem">'+p.summary+'</p>'+(p.positive?'<div style="background:rgba(92,184,92,.08);border:1px solid rgba(92,184,92,.2);border-radius:9px;padding:.7rem;font-size:.78rem;color:#5cb85c;margin-top:.7rem">Good: '+p.positive+'</div>':'')+'</div>'+(ih?'<div class="src2"><div class="ctit">Issues Found</div>'+ih+'</div>':'')+'<div class="src2"><div class="ctit">Action Plan</div>'+ah+'</div><div style="background:rgba(200,149,26,.06);border:1px solid rgba(200,149,26,.2);border-radius:9px;padding:.8rem;font-size:.76rem;color:#a89070">Next Check: '+(p.nextcheck||"Monitor weekly")+'</div>';
     } else {
-      res.innerHTML = '<div class="src2"><div class="ctit">AI Analysis</div><p style="font-size:.83rem;line-height:1.7">'+raw+'</p></div>';
+      res.innerHTML='<div class="src2"><div class="ctit">AI Analysis</div><p style="font-size:.83rem;line-height:1.7">'+raw+'</p></div>';
     }
-    btn.disabled = false;
-    btn.textContent = "Analyze My Farm";
+    btn.disabled=false; btn.textContent="Analyze My Farm";
   })
-  .catch(function(e) {
-    gsErr("Network error: " + e.message);
-  });
+  .catch(function(e){gsErr("Network: "+e.message);});
 }
 
-function gsErr(msg) {
-  document.getElementById("gsres").innerHTML = '<div class="src2" style="border-color:rgba(248,113,113,.3)"><p style="color:#f87171">Error: '+msg+'</p></div>';
-  var btn = document.getElementById("gsabtn");
-  btn.disabled = false;
-  btn.textContent = "Analyze My Farm";
+function gsErr(msg){
+  document.getElementById("gsres").innerHTML='<div class="src2" style="border-color:rgba(248,113,113,.3)"><p style="color:#f87171">Error: '+msg+'</p></div>';
+  document.getElementById("gsabtn").disabled=false;
+  document.getElementById("gsabtn").textContent="Analyze My Farm";
 }
 
-function gcToggle() {
-  _gcO = !_gcO;
-  document.getElementById("gcbox").style.display = _gcO ? "flex" : "none";
-  document.getElementById("gcb").textContent = _gcO ? "X" : "Chat";
-  if (_gcO) { document.getElementById("gcinp").focus(); }
+function gcToggle(){
+  _gcO=!_gcO;
+  document.getElementById("gcbox").style.display=_gcO?"flex":"none";
+  document.getElementById("gcb").textContent=_gcO?"✕ Close":"💬 Ask AI";
+  if(_gcO) document.getElementById("gcinp").focus();
 }
 
-function gcMsg(txt, cls) {
-  var el = document.getElementById("gcmsgs");
-  var d = document.createElement("div");
-  d.className = "gcm " + cls;
-  d.textContent = txt;
-  el.appendChild(d);
-  el.scrollTop = el.scrollHeight;
-  return d;
+function gcMsg(txt,cls){
+  var el=document.getElementById("gcmsgs");
+  var d=document.createElement("div");
+  d.className="gcm "+cls; d.textContent=txt;
+  el.appendChild(d); el.scrollTop=el.scrollHeight; return d;
 }
 
-function gcSend() {
-  var inp = document.getElementById("gcinp");
-  var q = inp.value.trim();
-  if (!q) return;
-  inp.value = "";
-  inp.disabled = true;
-  document.getElementById("gcsnd").disabled = true;
-  gcMsg(q, "gcmu");
-  var typ = gcMsg("Thinking...", "gcmb");
-  var sys = "You are Gro.ai, expert agronomist for Indian farmers. Give practical advice about crops, diseases, fertilizers (Indian brands like DAP Urea 19:19:19), govt schemes like PM Kisan MSP NHB, APMC prices, soil. Reply in English or Hindi based on farmer. Keep it under 150 words. Be friendly.";
-  var contents;
-  if (_gcH.length === 0) {
-    contents = [{role:"user", parts:[{text: sys + " Farmer asks: " + q}]}];
-  } else {
-    contents = [{role:"user", parts:[{text: sys + " Farmer asks: " + _gcH[0][0]}]}, {role:"model", parts:[{text: _gcH[0][1]}]}];
-    for (var i = 1; i < Math.min(_gcH.length, 4); i++) {
-      contents.push({role:"user", parts:[{text: _gcH[i][0]}]});
-      contents.push({role:"model", parts:[{text: _gcH[i][1]}]});
-    }
-    contents.push({role:"user", parts:[{text: q}]});
+function gcSend(){
+  var inp=document.getElementById("gcinp");
+  var q=inp.value.trim(); if(!q) return;
+  inp.value=""; inp.disabled=true;
+  document.getElementById("gcsnd").disabled=true;
+  gcMsg(q,"gcmu");
+  var typ=gcMsg("Thinking...","gcmb");
+  var sys="You are Gro.ai, expert AI agronomist for Indian farmers especially Karnataka. Give practical advice on crops, diseases, fertilizers (Indian brands: DAP, Urea, 19:19:19, Bordeaux mixture), govt schemes (PM Kisan, MSP, NHB subsidies), APMC prices, soil types. ALWAYS reply in English only. Max 150 words. Be friendly and helpful.";
+  var messages=[{role:"system",content:sys}];
+  for(var i=0;i<Math.min(_gcH.length,6);i++){
+    messages.push({role:"user",content:_gcH[i][0]});
+    messages.push({role:"assistant",content:_gcH[i][1]});
   }
-  fetch(_gU, {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({contents: contents, generationConfig: {temperature: 0.7, maxOutputTokens: 300}})
+  messages.push({role:"user",content:q});
+  fetch(_gChat,{
+    method:"POST",
+    headers:{"Content-Type":"application/json","Authorization":"Bearer "+_gK},
+    body:JSON.stringify({model:"llama-3.1-8b-instant",messages:messages,temperature:0.7,max_tokens:300})
   })
-  .then(function(r) { return r.json(); })
-  .then(function(d) {
+  .then(function(r){return r.json();})
+  .then(function(d){
     typ.remove();
     var rep;
-    if (d.error) { rep = "Error: " + d.error.message; }
-    else if (!d.candidates || !d.candidates[0]) { rep = "No response. Please try again."; }
-    else {
-      rep = d.candidates[0].content.parts[0].text;
-      _gcH.push([q, rep]);
-      if (_gcH.length > 8) _gcH = _gcH.slice(-8);
-    }
-    gcMsg(rep, "gcmb");
-    inp.disabled = false;
-    document.getElementById("gcsnd").disabled = false;
-    inp.focus();
+    if(d.error){rep="Error: "+d.error.message;}
+    else if(!d.choices||!d.choices[0]){rep="No response. Try again.";}
+    else{rep=d.choices[0].message.content;_gcH.push([q,rep]);if(_gcH.length>8)_gcH=_gcH.slice(-8);}
+    gcMsg(rep,"gcmb");
+    inp.disabled=false; document.getElementById("gcsnd").disabled=false; inp.focus();
   })
-  .catch(function(e) {
-    typ.remove();
-    gcMsg("Network error: " + e.message, "gcmb");
-    inp.disabled = false;
-    document.getElementById("gcsnd").disabled = false;
+  .catch(function(e){
+    typ.remove(); gcMsg("Network error: "+e.message,"gcmb");
+    inp.disabled=false; document.getElementById("gcsnd").disabled=false;
   });
 }
 
